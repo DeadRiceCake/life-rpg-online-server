@@ -1,5 +1,13 @@
 # TODO LIST 기반 내 인생 RPG게임으로 만들기 프로젝트
 
+## 제작일지
+[블로그에 훈수두러 가기]()
+
+## 프로젝트 소개
+- 이 프로젝트는 TODO LIST를 기반으로 내 인생 RPG게임을 만들어보는 프로젝트입니다.
+- 아직 한게 없어서 일단 여기까지만 적겠습니다. 아래는 기존 nestjs starter README.md 파일 내용입니다.
+- [제작일지 구경하러 가기](https://velog.io/@dead_rice_cake/life-rpg-%EC%A0%9C%EC%9E%91%EC%9D%BC%EC%A7%801-%EC%8B%9C%EC%9E%91%EC%9D%B4-%EB%B0%98%EC%9D%B4%EB%8B%A4)
+
 ## NestJS Starter Kit [v2]
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)

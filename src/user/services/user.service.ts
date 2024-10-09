@@ -34,9 +34,7 @@ export class UserService {
     this.logger.log(ctx, `calling ${UserRepository.name}.saveUser`);
     const savedUser = await this.repository.save(user);
     
-    const hero = await this.heroService.createHero(ctx, savedUser, input.heroName);
-
-    savedUser.hero = hero;
+    await this.heroService.createHero(ctx, savedUser, input.heroName);
 
     return savedUser;
   }

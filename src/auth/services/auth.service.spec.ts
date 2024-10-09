@@ -30,6 +30,7 @@ describe('AuthService', () => {
     roles: [ROLE.USER],
     isAccountDisabled: false,
     email: 'randomUser@random.com',
+    heroName: 'Kihira',
   };
 
   const currentDate = new Date().toString();

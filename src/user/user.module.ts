@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { JwtAuthStrategy } from '../auth/strategies/jwt-auth.strategy';
+import { HeroModule } from '../hero/hero.module';
 import { SharedModule } from '../shared/shared.module';
 import { UserController } from './controllers/user.controller';
 import { User } from './entities/user.entity';
@@ -10,7 +11,7 @@ import { UserService } from './services/user.service';
 import { UserAclService } from './services/user-acl.service';
 
 @Module({
-  imports: [SharedModule, TypeOrmModule.forFeature([User])],
+  imports: [SharedModule, TypeOrmModule.forFeature([User]), HeroModule],
   providers: [UserService, JwtAuthStrategy, UserAclService, UserRepository],
   controllers: [UserController],
   exports: [UserService],

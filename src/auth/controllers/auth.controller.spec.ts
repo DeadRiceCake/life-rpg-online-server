@@ -2,9 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { AppLogger } from '../../shared/logger/logger.service';
 import { RequestContext } from '../../shared/request-context/request-context.dto';
+import { User } from '../../user/entities/user.entity';
+import { ROLE } from '../constants/role.constant';
 import { LoginInput } from '../dtos/auth-login-input.dto';
 import { RefreshTokenInput } from '../dtos/auth-refresh-token-input.dto';
 import { RegisterInput } from '../dtos/auth-register-input.dto';
+import { RegisterOutput } from '../dtos/auth-register-output.dto';
 import { AuthTokenOutput } from '../dtos/auth-token-output.dto';
 import { AuthService } from '../services/auth.service';
 import { AuthController } from './auth.controller';
@@ -45,17 +48,23 @@ describe('AuthController', () => {
       registerInputDto.name = 'John Doe';
       registerInputDto.username = 'john@example.com';
       registerInputDto.password = '123123';
+      registerInputDto.heroName = 'Kihira';
 
       jest
         .spyOn(mockedAuthService, 'register')
-        .mockImplementation(async () => null);
+        .mockImplementation(async () => User.of({ 
+          id: 1,
+          name: registerInputDto.name,
+          username: registerInputDto.username,
+          roles: [ROLE.USER],
+          email: registerInputDto.username,
+          isAccountDisabled: false,
+        }));
 
-      expect(await authController.registerLocal(ctx, registerInputDto)).toEqual(
-        {
-          data: null,
-          meta: {},
-        },
-      );
+      const { data, meta } = await authController.registerLocal(ctx, registerInputDto);
+
+      expect(data).toBeInstanceOf(RegisterOutput);
+      expect(meta) .toEqual({});
     });
   });
 

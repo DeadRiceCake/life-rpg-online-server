@@ -1,4 +1,5 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
+import { plainToClass } from 'class-transformer';
 import request from 'supertest';
 import { createConnection, getConnection } from 'typeorm';
 
@@ -63,14 +64,16 @@ export const seedAdminUser = async (
     roles: [ROLE.ADMIN],
     isAccountDisabled: false,
     email: 'default-admin@example.com',
+    heroName: 'Admin',
   };
 
   const ctx = new RequestContext();
 
   // Creating Admin User
   const userService = app.get(UserService);
-  const userOutput = await userService.createUser(ctx, defaultAdmin);
-  console.log('Admin User created:', userOutput);
+  const user = await userService.createUser(ctx, defaultAdmin);
+  const userOutput = plainToClass(UserOutput, user, { excludeExtraneousValues: true });
+
   const loginInput: LoginInput = {
     username: defaultAdmin.username,
     password: defaultAdmin.password,
@@ -78,12 +81,16 @@ export const seedAdminUser = async (
 
   // Logging in Admin User to get AuthToken
   const loginResponse = await request(app.getHttpServer())
-    .post('/auth/login')
+    .post('/v1/auth/login')
     .send(loginInput)
-    .expect(HttpStatus.OK);
+    .expect(HttpStatus.OK)
+    .catch((err) => {
+      console.error('Error logging in Admin User:', err);
+      throw err;
+    });
 
   const authTokenForAdmin: AuthTokenOutput = loginResponse.body.data;
-
+  console.log('Admin User AuthToken:', authTokenForAdmin);
   const adminUser: UserOutput = JSON.parse(JSON.stringify(userOutput));
 
   return { adminUser, authTokenForAdmin };

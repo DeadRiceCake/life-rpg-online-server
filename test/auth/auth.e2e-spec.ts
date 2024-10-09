@@ -1,7 +1,8 @@
-import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
+import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
 
+import { setNestApp } from '../../set-nest-app';
 import { ROLE } from '../../src/auth/constants/role.constant';
 import { LoginInput } from '../../src/auth/dtos/auth-login-input.dto';
 import { RefreshTokenInput } from '../../src/auth/dtos/auth-refresh-token-input.dto';
@@ -28,7 +29,7 @@ describe('AuthController (e2e)', () => {
     }).compile();
 
     app = moduleRef.createNestApplication();
-    app.useGlobalPipes(new ValidationPipe());
+    setNestApp(app);
     await app.init();
 
     const adminUserTokens = await seedAdminUser(app);
@@ -50,6 +51,7 @@ describe('AuthController (e2e)', () => {
       roles: [ROLE.USER],
       isAccountDisabled: false,
       email: 'e2etester@random.com',
+      heroName: 'e2etester',
     };
 
     const registerOutput = {
@@ -63,7 +65,7 @@ describe('AuthController (e2e)', () => {
 
     it('should successfully register a new user', async () => {
       await request(app.getHttpServer())
-        .post('/auth/register')
+        .post('/v1/auth/register')
         .send(registerInput)
         .expect(HttpStatus.CREATED)
         .expect((res) => {
@@ -74,14 +76,14 @@ describe('AuthController (e2e)', () => {
 
     it('should fail to register without Input DTO', async () => {
       await request(app.getHttpServer())
-        .post('/auth/register')
+        .post('/v1/auth/register')
         .expect(HttpStatus.BAD_REQUEST);
     });
 
     it('should fail to register with incorrect username format', async () => {
       const invalidRegisterInput = { ...registerInput, username: 12345 as any };
       await request(app.getHttpServer())
-        .post('/auth/register')
+        .post('/v1/auth/register')
         .send(invalidRegisterInput)
         .expect(HttpStatus.BAD_REQUEST);
     });
@@ -95,7 +97,7 @@ describe('AuthController (e2e)', () => {
 
     it('should successfully login the user', async () => {
       await request(app.getHttpServer())
-        .post('/auth/login')
+        .post('/v1/auth/login')
         .send(loginInput)
         .expect(HttpStatus.OK)
         .expect((res) => {
@@ -107,7 +109,7 @@ describe('AuthController (e2e)', () => {
 
     it('should fail to login with wrong credentials', async () => {
       await request(app.getHttpServer())
-        .post('/auth/login')
+        .post('/v1/auth/login')
         .send({ ...loginInput, password: 'wrong-pass' })
         .expect(HttpStatus.UNAUTHORIZED);
     });
@@ -123,7 +125,7 @@ describe('AuthController (e2e)', () => {
 
     it('should successfully get new auth token using refresh token', async () => {
       const loginResponse = await request(app.getHttpServer())
-        .post('/auth/login')
+        .post('/v1/auth/login')
         .send(loginInput);
 
       const token: AuthTokenOutput = loginResponse.body.data;
@@ -132,7 +134,7 @@ describe('AuthController (e2e)', () => {
       };
 
       await request(app.getHttpServer())
-        .post('/auth/refresh-token')
+        .post('/v1/auth/refresh-token')
         .send(refreshTokenInput)
         .expect(HttpStatus.OK)
         .expect((res) => {

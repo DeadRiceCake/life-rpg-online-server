@@ -3,6 +3,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import * as bcrypt from 'bcrypt';
 
 import { ROLE } from '../../auth/constants/role.constant';
+import { Hero } from '../../hero/entities/hero.entity';
+import { HeroService } from '../../hero/services/hero.service';
 import { AppLogger } from '../../shared/logger/logger.service';
 import { RequestContext } from '../../shared/request-context/request-context.dto';
 import { UpdateUserInput } from '../dtos/user-update-input.dto';
@@ -31,10 +33,15 @@ describe('UserService', () => {
 
   const mockedLogger = { setContext: jest.fn(), log: jest.fn() };
 
+  const mockedHeroService = {
+    createHero: jest.fn(),
+  };
+
   beforeEach(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
       providers: [
         UserService,
+        { provide: HeroService, useValue: mockedHeroService },
         {
           provide: UserRepository,
           useValue: mockedRepository,
@@ -71,35 +78,14 @@ describe('UserService', () => {
         roles: [ROLE.USER],
         isAccountDisabled: false,
         email: 'randomUser@random.com',
+        heroName: 'Kihira',
       };
 
       await service.createUser(ctx, userInput);
       expect(bcrypt.hash).toBeCalledWith(userInput.password, 10);
     });
 
-    it('should save user with encrypted password', async () => {
-      const userInput = {
-        name: user.name,
-        username: user.username,
-        password: 'plain-password',
-        roles: [ROLE.USER],
-        isAccountDisabled: false,
-        email: 'randomUser@random.com',
-      };
-
-      await service.createUser(ctx, userInput);
-
-      expect(mockedRepository.save).toBeCalledWith({
-        name: user.name,
-        username: user.username,
-        password: 'hashed-password',
-        roles: [ROLE.USER],
-        isAccountDisabled: false,
-        email: 'randomUser@random.com',
-      });
-    });
-
-    it('should return serialized user', async () => {
+    it('should return user', async () => {
       jest.spyOn(mockedRepository, 'save').mockImplementation(async (input) => {
         input.id = 6;
         return input;
@@ -112,19 +98,12 @@ describe('UserService', () => {
         roles: [ROLE.USER],
         isAccountDisabled: false,
         email: 'randomUser@random.com',
+        heroName: 'Kihira',
       };
 
       const result = await service.createUser(ctx, userInput);
 
-      expect(result).toEqual({
-        id: user.id,
-        name: userInput.name,
-        username: userInput.username,
-        roles: [ROLE.USER],
-        isAccountDisabled: false,
-        email: 'randomUser@random.com',
-      });
-      expect(result).not.toHaveProperty('password');
+      expect(result).toBeInstanceOf(User);
     });
 
     afterEach(() => {
@@ -307,6 +286,7 @@ describe('UserService', () => {
         createdAt: currentDate,
         updatedAt: currentDate,
         articles: [],
+        hero: new Hero(),
       };
 
       mockedRepository.getById.mockResolvedValue(foundUser);
@@ -322,6 +302,7 @@ describe('UserService', () => {
         createdAt: currentDate,
         updatedAt: currentDate,
         articles: [],
+        hero: new Hero(),
       };
 
       jest

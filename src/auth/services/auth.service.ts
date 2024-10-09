@@ -6,10 +6,10 @@ import { plainToClass } from 'class-transformer';
 import { AppLogger } from '../../shared/logger/logger.service';
 import { RequestContext } from '../../shared/request-context/request-context.dto';
 import { UserOutput } from '../../user/dtos/user-output.dto';
+import { User } from '../../user/entities/user.entity';
 import { UserService } from '../../user/services/user.service';
 import { ROLE } from '../constants/role.constant';
 import { RegisterInput } from '../dtos/auth-register-input.dto';
-import { RegisterOutput } from '../dtos/auth-register-output.dto';
 import {
   AuthTokenOutput,
   UserAccessTokenClaims,
@@ -57,17 +57,14 @@ export class AuthService {
   async register(
     ctx: RequestContext,
     input: RegisterInput,
-  ): Promise<RegisterOutput> {
+  ): Promise<User> {
     this.logger.log(ctx, `${this.register.name} was called`);
 
     // TODO : Setting default role as USER here. Will add option to change this later via ADMIN users.
     input.roles = [ROLE.USER];
     input.isAccountDisabled = false;
 
-    const registeredUser = await this.userService.createUser(ctx, input);
-    return plainToClass(RegisterOutput, registeredUser, {
-      excludeExtraneousValues: true,
-    });
+    return await this.userService.createUser(ctx, input);
   }
 
   async refreshToken(ctx: RequestContext): Promise<AuthTokenOutput> {

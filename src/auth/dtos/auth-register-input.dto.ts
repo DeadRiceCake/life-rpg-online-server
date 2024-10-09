@@ -33,6 +33,12 @@ export class RegisterInput {
   @MaxLength(100)
   email: string;
 
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(10)
+  heroName: string;
+
   // These keys can only be set by ADMIN user.
   roles: ROLE[] = [ROLE.USER];
   isAccountDisabled: boolean;

@@ -49,4 +49,10 @@ export class CreateUserInput {
   @ApiProperty()
   @IsBoolean()
   isAccountDisabled: boolean;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(10)
+  heroName: string;
 }

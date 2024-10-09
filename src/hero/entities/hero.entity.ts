@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 
 import { User } from '../../user/entities/user.entity';
-import { Job } from '../constants/job.constant';
+import { JOB, Job } from '../constants/job.constant';
 
 
 @Entity('heroes')
@@ -29,11 +29,17 @@ export class Hero {
   @Column()
   experience: number;
 
-  @Column()
-  hp: number;
+  @Column({ name: 'max_hp' })
+  maxHp: number;
 
-  @Column()
-  mp: number;
+  @Column({ name: 'current_hp' })
+  currentHp: number;
+
+  @Column({ name: 'max_mp' })
+  maxMp: number;
+
+  @Column({ name: 'current_mp' })
+  currentMp: number;
   
   @Column()
   strength: number;
@@ -79,14 +85,16 @@ export class Hero {
 
   // methods ================================================
 
-  static createHero(name: string, job: Job, user: User): Hero {
+  static createHero(name: string, user: User): Hero {
     const hero = new Hero();
     hero.name = name;
-    hero.job = job;
+    hero.job = JOB.CITIZEN;
     hero.level = 1;
     hero.experience = 0;
-    hero.hp = 100;
-    hero.mp = 100;
+    hero.maxHp = 100;
+    hero.currentHp = 100;
+    hero.maxMp = 100;
+    hero.currentMp = 100;
     hero.strength = 10;
     hero.intelligence = 10;
     hero.dexterity = 10;

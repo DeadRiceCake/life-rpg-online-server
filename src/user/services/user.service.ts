@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { compare, hash } from 'bcrypt';
 import { plainToClass } from 'class-transformer';
 
+import { HeroService } from '../../hero/services/hero.service';
 import { AppLogger } from '../../shared/logger/logger.service';
 import { RequestContext } from '../../shared/request-context/request-context.dto';
 import { CreateUserInput } from '../dtos/user-create-input.dto';
@@ -13,15 +14,17 @@ import { UserRepository } from '../repositories/user.repository';
 @Injectable()
 export class UserService {
   constructor(
-    private repository: UserRepository,
+    private readonly heroService: HeroService,
+    private readonly repository: UserRepository,
     private readonly logger: AppLogger,
   ) {
     this.logger.setContext(UserService.name);
   }
+
   async createUser(
     ctx: RequestContext,
     input: CreateUserInput,
-  ): Promise<UserOutput> {
+  ): Promise<User> {
     this.logger.log(ctx, `${this.createUser.name} was called`);
 
     const user = plainToClass(User, input);
@@ -29,11 +32,13 @@ export class UserService {
     user.password = await hash(input.password, 10);
 
     this.logger.log(ctx, `calling ${UserRepository.name}.saveUser`);
-    await this.repository.save(user);
+    const savedUser = await this.repository.save(user);
+    
+    const hero = await this.heroService.createHero(ctx, savedUser, input.heroName);
 
-    return plainToClass(UserOutput, user, {
-      excludeExtraneousValues: true,
-    });
+    savedUser.hero = hero;
+
+    return savedUser;
   }
 
   async validateUsernamePassword(

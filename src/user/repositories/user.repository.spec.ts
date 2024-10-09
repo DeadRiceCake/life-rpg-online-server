@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DataSource } from 'typeorm';
 
 import { ROLE } from '../../auth/constants/role.constant';
+import { Hero } from '../../hero/entities/hero.entity';
 import { User } from '../entities/user.entity';
 import { UserRepository } from './user.repository';
 
@@ -51,6 +52,7 @@ describe('UserRepository', () => {
         createdAt: currentDate,
         updatedAt: currentDate,
         articles: [],
+        hero: new Hero(),
       };
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(expectedOutput);
@@ -70,6 +72,7 @@ describe('UserRepository', () => {
         createdAt: currentDate,
         updatedAt: currentDate,
         articles: [],
+        hero: new Hero(),
       };
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(expectedOutput);

@@ -36,7 +36,7 @@ export class AuthController {
   ) {
     this.logger.setContext(AuthController.name);
   }
-  @Post('login')
+  @Post('/login')
   @ApiOperation({
     summary: 'User login API',
   })
@@ -75,7 +75,7 @@ export class AuthController {
     @Body() input: RegisterInput,
   ): Promise<BaseApiResponse<RegisterOutput>> {
     const registeredUser = await this.authService.register(ctx, input);
-    return { data: registeredUser, meta: {} };
+    return { data: new RegisterOutput(registeredUser), meta: {} };
   }
 
   @Post('refresh-token')

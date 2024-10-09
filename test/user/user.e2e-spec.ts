@@ -1,7 +1,8 @@
-import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
+import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 
+import { setNestApp } from '../../set-nest-app';
 import { AppModule } from '../../src/app.module';
 import { AuthTokenOutput } from '../../src/auth/dtos/auth-token-output.dto';
 import { UserOutput } from '../../src/user/dtos/user-output.dto';
@@ -26,7 +27,7 @@ describe('UserController (e2e)', () => {
     }).compile();
 
     app = moduleRef.createNestApplication();
-    app.useGlobalPipes(new ValidationPipe());
+    setNestApp(app);
     await app.init();
 
     ({ adminUser, authTokenForAdmin } = await seedAdminUser(app));
@@ -35,20 +36,20 @@ describe('UserController (e2e)', () => {
   describe('Get user me', () => {
     it('gets user me', async () => {
       return request(app.getHttpServer())
-        .get('/users/me')
+        .get('/v1/users/me')
         .set('Authorization', 'Bearer ' + authTokenForAdmin.accessToken)
         .expect(HttpStatus.OK);
     });
 
     it('Unauthorized error when BearerToken is not provided', async () => {
       return request(app.getHttpServer())
-        .get('/users/me')
+        .get('/v1/users/me')
         .expect(HttpStatus.UNAUTHORIZED);
     });
 
     it('Unauthorized error when BearerToken is wrong', async () => {
       return request(app.getHttpServer())
-        .get('/users/me')
+        .get('/v1/users/me')
         .set('Authorization', 'Bearer ' + 'abcd')
         .expect(HttpStatus.UNAUTHORIZED);
     });
@@ -59,7 +60,7 @@ describe('UserController (e2e)', () => {
       const expectedOutput = [adminUser];
 
       return request(app.getHttpServer())
-        .get('/users')
+        .get('/v1/users')
         .set('Authorization', 'Bearer ' + authTokenForAdmin.accessToken)
         .expect(HttpStatus.OK)
         .expect({ data: expectedOutput, meta: { count: 1 } });
@@ -71,14 +72,14 @@ describe('UserController (e2e)', () => {
       const expectedOutput = adminUser;
 
       return request(app.getHttpServer())
-        .get('/users/1')
+        .get('/v1/users/1')
         .expect(HttpStatus.OK)
         .expect({ data: expectedOutput, meta: {} });
     });
 
     it('throws NOT_FOUND when user doesnt exist', () => {
       return request(app.getHttpServer())
-        .get('/users/99')
+        .get('/v1/users/99')
         .expect(HttpStatus.NOT_FOUND);
     });
   });
@@ -96,7 +97,7 @@ describe('UserController (e2e)', () => {
       };
 
       return request(app.getHttpServer())
-        .patch('/users/1')
+        .patch('/v1/users/1')
         .send(updateUserInput)
         .expect(HttpStatus.OK)
         .expect((res) => {
@@ -108,14 +109,14 @@ describe('UserController (e2e)', () => {
 
     it('throws NOT_FOUND when user doesnt exist', () => {
       return request(app.getHttpServer())
-        .patch('/users/99')
+        .patch('/v1/users/99')
         .expect(HttpStatus.NOT_FOUND);
     });
 
     it('update fails when incorrect password type', () => {
       updateUserInput.password = 12345 as any;
       return request(app.getHttpServer())
-        .patch('/users/1')
+        .patch('/v1/users/1')
         .expect(HttpStatus.BAD_REQUEST)
         .send(updateUserInput)
         .expect((res) => {

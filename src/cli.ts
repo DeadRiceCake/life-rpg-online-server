@@ -24,6 +24,7 @@ async function bootstrap() {
     roles: [ROLE.ADMIN],
     isAccountDisabled: false,
     email: 'default-admin@example.com',
+    heroName: 'Admin',
   };
 
   const ctx = new RequestContext();

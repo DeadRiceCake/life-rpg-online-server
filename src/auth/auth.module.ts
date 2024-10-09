@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 
+import { HeroModule } from '../hero/hero.module';
 import { SharedModule } from '../shared/shared.module';
 import { UserModule } from '../user/user.module';
 import { STRATEGY_JWT_AUTH } from './constants/strategy.constant';
@@ -28,6 +29,7 @@ import { LocalStrategy } from './strategies/local.strategy';
       inject: [ConfigService],
     }),
     UserModule,
+    HeroModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, JwtAuthStrategy, JwtRefreshStrategy],

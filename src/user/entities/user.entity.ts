@@ -3,12 +3,14 @@ import {
   CreateDateColumn,
   Entity,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { Article } from '../../article/entities/article.entity';
+import { Hero } from '../../hero/entities/hero.entity';
 
 @Entity('users')
 export class User {
@@ -41,6 +43,11 @@ export class User {
   @UpdateDateColumn({ name: 'updatedAt', nullable: true })
   updatedAt: Date;
 
+  // relations ==============================================
+
   @OneToMany(() => Article, (article) => article.author)
   articles: Article[];
+
+  @OneToOne(() => Hero, (hero) => hero.user)
+  hero: Hero;
 }

@@ -15,61 +15,61 @@ import { JOB, Job } from '../constants/job.constant';
 @Entity('heroes')
 export class Hero {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: number; // PK
 
   @Column({ length: 10 })
-  name: string;
+  name: string; // 영웅 이름
 
   @Column()
-  job: Job;
+  job: Job; // 직업: "citizen" | "warrior" | "mage" | "theif"
 
   @Column()
-  level: number;
+  level: number; // 레벨
 
   @Column()
-  experience: number;
+  experience: number; // 경험치
 
   @Column({ name: 'max_hp' })
-  maxHp: number;
+  maxHp: number; // 최대 체력
 
   @Column({ name: 'current_hp' })
-  currentHp: number;
+  currentHp: number; // 현재 체력
 
   @Column({ name: 'max_mp' })
-  maxMp: number;
+  maxMp: number; // 최대 마나
 
   @Column({ name: 'current_mp' })
-  currentMp: number;
+  currentMp: number; // 현재 마나
   
   @Column()
-  strength: number;
+  strength: number; // 힘 (물리 공격력, 체력 관여)
   
   @Column()
-  intelligence: number;
+  intelligence: number; // 지능 (마법 공격력, 마나 관여)
   
   @Column()
-  dexterity: number;
+  dexterity: number; // 민첩 (회피율, 치명타율 관여)
 
   @Column()
-  dodge: number;
+  dodge: number; // 회피율
 
   @Column()
-  critical: number;
+  critical: number; // 치명타율
   
   @Column()
-  physicalAttack: number;
+  physicalAttack: number; // 물리 공격력
 
   @Column()
-  magicalAttack: number;
+  magicalAttack: number; // 마법 공격력
 
   @Column()
-  physicalDefense: number;
+  physicalDefense: number; // 물리 방어력
 
   @Column()
-  magicalDefense: number;
+  magicalDefense: number; // 마법 방어력
 
   @Column()
-  fatigue: number;
+  fatigue: number; // 피로도 (0 ~ 100) 0: 피로 없음, 100: 피로 최대 (피로도가 100이 되면 전투 불가)
 
   @CreateDateColumn({ name: 'createdAt', nullable: true })
   createdAt: Date;
@@ -109,6 +109,9 @@ export class Hero {
     return hero;
   }
 
+  /**
+   * 다음 레벨까지 필요한 경험치
+   */
   experienceToNextLevel(): number {
     return this.level * 100;
   }

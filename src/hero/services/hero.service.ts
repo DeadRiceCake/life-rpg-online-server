@@ -18,7 +18,7 @@ export class HeroService {
   async createHero(ctx: RequestContext, user: User, name: string): Promise<Hero> {
     this.logger.log(ctx, `${this.createHero.name} was called`);
 
-    const hero =  Hero.createHero(name, user);
+    const hero =  Hero.of(name, user);
     
     this.logger.log(ctx, `calling ${HeroRepository.name}.save`);
     return await this.repository.save(hero);

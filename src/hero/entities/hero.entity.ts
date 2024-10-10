@@ -85,7 +85,7 @@ export class Hero {
 
   // methods ================================================
 
-  static createHero(name: string, user: User): Hero {
+  static of(name: string, user: User): Hero {
     const hero = new Hero();
     hero.name = name;
     hero.job = JOB.CITIZEN;

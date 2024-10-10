@@ -170,14 +170,14 @@ export class HeroOutput {
 
   @Expose()
   @ApiProperty()
-  get createdAt(): string {
-    return this._createdAt.toISOString();
+  get createdAt(): Date {
+    return this._createdAt;
   }
 
   @Expose()
   @ApiProperty()
-  get updatedAt(): string {
-    return this._updatedAt.toISOString();
+  get updatedAt(): Date {
+    return this._updatedAt;
   }
 
   @Expose()

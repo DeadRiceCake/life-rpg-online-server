@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { compare, hash } from 'bcrypt';
 import { plainToClass } from 'class-transformer';
+import { Transactional } from 'typeorm-transactional';
 
 import { HeroService } from '../../hero/services/hero.service';
 import { AppLogger } from '../../shared/logger/logger.service';
@@ -21,6 +22,7 @@ export class UserService {
     this.logger.setContext(UserService.name);
   }
 
+  @Transactional()
   async createUser(
     ctx: RequestContext,
     input: CreateUserInput,

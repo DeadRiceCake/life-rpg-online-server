@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
+import { addTransactionalDataSource } from 'typeorm-transactional';
 
 import { configModuleOptions } from './configs/module-options';
 import { AllExceptionsFilter } from './filters/all-exceptions.filter';
@@ -22,12 +24,18 @@ import { AppLoggerModule } from './logger/logger.module';
         username: configService.get<string>('database.user'),
         password: configService.get<string>('database.pass'),
         entities: [__dirname + '/../**/entities/*.entity{.ts,.js}'],
-        // Timezone configured on the Postgres server.
-        // This is used to typecast server date/time values to JavaScript Date object and vice versa.
         timezone: 'Z',
         synchronize: false,
         debug: configService.get<string>('env') === 'development',
       }),
+      dataSourceFactory: async (options) => {
+        if (!options) {
+          throw new Error('Invalid options passed');
+        }
+        const dataSource = new DataSource(options);
+
+        return addTransactionalDataSource(dataSource);
+      },
     }),
     AppLoggerModule,
   ],

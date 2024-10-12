@@ -1,11 +1,14 @@
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { initializeTransactionalContext } from 'typeorm-transactional';
 
 import { setNestApp } from '../set-nest-app';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
+  initializeTransactionalContext();
+  
   const app = await NestFactory.create(AppModule);
   
   setNestApp(app);

@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, FindOptionsRelations, Repository } from 'typeorm';
 
 import { User } from '../entities/user.entity';
 
@@ -9,8 +9,11 @@ export class UserRepository extends Repository<User> {
     super(User, dataSource.createEntityManager());
   }
 
-  async getById(id: number): Promise<User> {
-    const user = await this.findOne({ where: { id } });
+  async getById(id: number, relationOptions?: FindOptionsRelations<User>): Promise<User> {
+    const user = await this.findOne({ 
+      where: { id },
+      relations: relationOptions
+    });
     if (!user) {
       throw new NotFoundException();
     }

@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { compare, hash } from 'bcrypt';
 import { plainToClass } from 'class-transformer';
+import { FindOptionsRelations } from 'typeorm';
 import { Transactional } from 'typeorm-transactional';
 
 import { HeroService } from '../../hero/services/hero.service';
@@ -92,11 +93,11 @@ export class UserService {
     });
   }
 
-  async getUserById(ctx: RequestContext, id: number): Promise<UserOutput> {
+  async getUserById(ctx: RequestContext, id: number, relationOptions?: FindOptionsRelations<User>): Promise<UserOutput> {
     this.logger.log(ctx, `${this.getUserById.name} was called`);
 
     this.logger.log(ctx, `calling ${UserRepository.name}.getById`);
-    const user = await this.repository.getById(id);
+    const user = await this.repository.getById(id, relationOptions);
 
     return plainToClass(UserOutput, user, {
       excludeExtraneousValues: true,

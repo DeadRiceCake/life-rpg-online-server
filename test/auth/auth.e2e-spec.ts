@@ -1,6 +1,7 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
+import { initializeTransactionalContext } from 'typeorm-transactional';
 
 import { setNestApp } from '../../set-nest-app';
 import { ROLE } from '../../src/auth/constants/role.constant';
@@ -8,6 +9,7 @@ import { LoginInput } from '../../src/auth/dtos/auth-login-input.dto';
 import { RefreshTokenInput } from '../../src/auth/dtos/auth-refresh-token-input.dto';
 import { RegisterInput } from '../../src/auth/dtos/auth-register-input.dto';
 import { AuthTokenOutput } from '../../src/auth/dtos/auth-token-output.dto';
+import { HeroService } from '../../src/hero/services/hero.service';
 import { AppModule } from './../../src/app.module';
 import {
   closeDBAfterTest,
@@ -19,6 +21,9 @@ import {
 describe('AuthController (e2e)', () => {
   let app: INestApplication;
   let authTokenForAdmin: AuthTokenOutput;
+  let heroService: HeroService;
+
+  initializeTransactionalContext();
 
   beforeAll(async () => {
     await resetDBBeforeTest();
@@ -27,6 +32,8 @@ describe('AuthController (e2e)', () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
+
+    heroService = moduleRef.get<HeroService>(HeroService);
 
     app = moduleRef.createNestApplication();
     setNestApp(app);
@@ -86,6 +93,20 @@ describe('AuthController (e2e)', () => {
         .post('/v1/auth/register')
         .send(invalidRegisterInput)
         .expect(HttpStatus.BAD_REQUEST);
+    });
+
+    it('유저 생성시 영웅 생성에서 오류날 경우 유저 저장이 되면 안됨', async () => {
+      jest.spyOn(heroService, 'createHero').mockRejectedValue(new Error('영웅 생성 오류'));
+
+      await request(app.getHttpServer())
+        .post('/v1/auth/register')
+        .send(registerInput)
+        .expect(HttpStatus.INTERNAL_SERVER_ERROR);
+
+      await request(app.getHttpServer())
+        .get('/v1/users/3')
+        .set('Authorization', `Bearer ${authTokenForAdmin.accessToken}`)
+        .expect(HttpStatus.NOT_FOUND);
     });
   });
 

@@ -120,7 +120,7 @@ export class UserController {
   ): Promise<BaseApiResponse<UserOutput>> {
     this.logger.log(ctx, `${this.getUser.name} was called`);
 
-    const user = await this.userService.getUserById(ctx, id);
+    const user = await this.userService.getUserById(ctx, id, { hero: true });
     return { data: user, meta: {} };
   }
 

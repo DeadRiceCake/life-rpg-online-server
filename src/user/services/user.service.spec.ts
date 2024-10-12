@@ -14,6 +14,10 @@ import { UserService } from './user.service';
 
 jest.mock('bcrypt');
 
+jest.mock('typeorm-transactional', () => ({
+  Transactional: () => () => ({}),
+}));
+
 describe('UserService', () => {
   let service: UserService;
 
@@ -150,7 +154,7 @@ describe('UserService', () => {
 
     it('should find user from DB using given id', async () => {
       await service.getUserById(ctx, user.id);
-      expect(mockedRepository.getById).toBeCalledWith(user.id);
+      expect(mockedRepository.getById).toHaveBeenCalledWith(user.id, undefined);
     });
 
     it('should return serialized user', async () => {

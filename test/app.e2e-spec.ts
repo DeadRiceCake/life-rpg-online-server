@@ -1,6 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
+import { initializeTransactionalContext } from 'typeorm-transactional';
 
 import { AppModule } from './../src/app.module';
 import {
@@ -11,6 +12,8 @@ import {
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
+
+  initializeTransactionalContext();
 
   beforeAll(async () => {
     await resetDBBeforeTest();

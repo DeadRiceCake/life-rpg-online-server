@@ -1,6 +1,7 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
+import { initializeTransactionalContext } from 'typeorm-transactional';
 
 import { setNestApp } from '../../set-nest-app';
 import { AppModule } from '../../src/app.module';
@@ -17,6 +18,8 @@ describe('UserController (e2e)', () => {
   let app: INestApplication;
   let adminUser: UserOutput;
   let authTokenForAdmin: AuthTokenOutput;
+
+  initializeTransactionalContext();
 
   beforeAll(async () => {
     await resetDBBeforeTest();

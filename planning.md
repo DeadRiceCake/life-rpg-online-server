@@ -23,6 +23,7 @@
 - 스킬
 
 - todo list
+daily, weekly, monthly
 
 - 랜덤 인카운터
 

@@ -3,11 +3,13 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
+import { DailyTodo } from '../../todo/entities/daily-todo.entity';
 import { User } from '../../user/entities/user.entity';
 import { JOB, Job } from '../constants/job.constant';
 
@@ -71,10 +73,10 @@ export class Hero {
   @Column()
   fatigue: number; // 피로도 (0 ~ 100) 0: 피로 없음, 100: 피로 최대 (피로도가 100이 되면 전투 불가)
 
-  @CreateDateColumn({ name: 'createdAt', nullable: true })
+  @CreateDateColumn({ name: 'created_at', nullable: true })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updatedAt', nullable: true })
+  @UpdateDateColumn({ name: 'updated_at', nullable: true })
   updatedAt: Date;
 
   // relations ==============================================
@@ -82,6 +84,9 @@ export class Hero {
   @OneToOne(() => User, (user) => user.hero)
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @OneToMany(() => DailyTodo, (dailyTodo) => dailyTodo.hero)
+  dailyTodos: DailyTodo[];
 
   // methods ================================================
 

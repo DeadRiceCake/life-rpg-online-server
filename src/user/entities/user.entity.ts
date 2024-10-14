@@ -38,10 +38,10 @@ export class User {
   @Column({ length: 200 })
   email: string;
 
-  @CreateDateColumn({ name: 'createdAt', nullable: true })
+  @CreateDateColumn({ name: 'created_at', nullable: true })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updatedAt', nullable: true })
+  @UpdateDateColumn({ name: 'updated_at', nullable: true })
   updatedAt: Date;
 
   // relations ==============================================

@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 
 import { DailyTodo } from '../../todo/entities/daily-todo.entity';
+import { WeeklyTodo } from '../../todo/entities/weekly-todo.entity';
 import { User } from '../../user/entities/user.entity';
 import { JOB, Job } from '../constants/job.constant';
 
@@ -87,6 +88,9 @@ export class Hero {
 
   @OneToMany(() => DailyTodo, (dailyTodo) => dailyTodo.hero)
   dailyTodos: DailyTodo[];
+
+  @OneToMany(() => WeeklyTodo, (weeklyTodo) => weeklyTodo.hero)
+  weeklyTodos: WeeklyTodo[];
 
   // methods ================================================
 

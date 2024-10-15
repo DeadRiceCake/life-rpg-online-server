@@ -24,55 +24,55 @@ export class Hero {
   @Column({ length: 10 })
   name: string; // 영웅 이름
 
-  @Column()
+  @Column({ default: JOB.CITIZEN })
   job: Job; // 직업: "citizen" | "warrior" | "mage" | "theif"
 
-  @Column()
+  @Column({ default: 1 })
   level: number; // 레벨
 
-  @Column()
+  @Column({ default: 0 })
   experience: number; // 경험치
 
-  @Column({ name: 'max_hp' })
+  @Column({ name: 'max_hp', default: 100 })
   maxHp: number; // 최대 체력
 
-  @Column({ name: 'current_hp' })
+  @Column({ name: 'current_hp', default: 100 })
   currentHp: number; // 현재 체력
 
-  @Column({ name: 'max_mp' })
+  @Column({ name: 'max_mp', default: 100 })
   maxMp: number; // 최대 마나
 
-  @Column({ name: 'current_mp' })
+  @Column({ name: 'current_mp', default: 100 })
   currentMp: number; // 현재 마나
   
-  @Column()
+  @Column({ default: 10 })
   strength: number; // 힘 (물리 공격력, 체력 관여)
   
-  @Column()
+  @Column({ default: 10 })
   intelligence: number; // 지능 (마법 공격력, 마나 관여)
   
-  @Column()
+  @Column({ default: 10 })
   dexterity: number; // 민첩 (회피율, 치명타율 관여)
 
-  @Column()
+  @Column({ default: 0 })
   dodge: number; // 회피율
 
-  @Column()
+  @Column({ default: 0 })
   critical: number; // 치명타율
   
-  @Column()
+  @Column({ name: 'physical_attack', default: 10 })
   physicalAttack: number; // 물리 공격력
 
-  @Column()
+  @Column({ name: 'magical_attack', default: 10 })
   magicalAttack: number; // 마법 공격력
 
-  @Column()
+  @Column({ name: 'physical_defense', default: 0 })
   physicalDefense: number; // 물리 방어력
 
-  @Column()
+  @Column({ name: 'magical_defense', default: 0 })
   magicalDefense: number; // 마법 방어력
 
-  @Column()
+  @Column({ default: 0 })
   fatigue: number; // 피로도 (0 ~ 100) 0: 피로 없음, 100: 피로 최대 (피로도가 100이 되면 전투 불가)
 
   @Column({ name: 'max_daily_todo_reward', default: 10 })
@@ -107,23 +107,6 @@ export class Hero {
   static of(name: string, user: User): Hero {
     const hero = new Hero();
     hero.name = name;
-    hero.job = JOB.CITIZEN;
-    hero.level = 1;
-    hero.experience = 0;
-    hero.maxHp = 100;
-    hero.currentHp = 100;
-    hero.maxMp = 100;
-    hero.currentMp = 100;
-    hero.strength = 10;
-    hero.intelligence = 10;
-    hero.dexterity = 10;
-    hero.dodge = 0;
-    hero.critical = 0;
-    hero.physicalAttack = 10;
-    hero.magicalAttack = 10;
-    hero.physicalDefense = 0;
-    hero.magicalDefense = 0;
-    hero.fatigue = 0;
     hero.user = user;
     return hero;
   }

@@ -4,7 +4,6 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-
 export abstract class Todo {
   @PrimaryGeneratedColumn()
   id: number; // PK

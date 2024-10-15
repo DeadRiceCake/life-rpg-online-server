@@ -1,34 +1,14 @@
 import {
-  Column,
-  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
-  PrimaryGeneratedColumn,
 } from 'typeorm';
 
 import { Hero } from '../../hero/entities/hero.entity';
+import { Todo } from './base-todo.entity';
 
 @Entity('daily_todos')
-export class DailyTodo {
-  @PrimaryGeneratedColumn()
-  id: number; // PK
-
-  @Column({ length: 50 })
-  name: string; // 할 일 이름
-
-  @Column({ length: 255 })
-  description: string; // 할 일 설명
-
-  @Column({ name: 'display_order' })
-  displayOrder: number; // 표시 순서
-
-  @Column({ default: false })
-  isDone: boolean; // 완료 여부
-
-  @CreateDateColumn({ name: 'created_at', nullable: true })
-  createdAt: Date;
-
+export class DailyTodo extends Todo {
   // relations ==============================================
 
   @ManyToOne(() => Hero, (hero) => hero.dailyTodos)

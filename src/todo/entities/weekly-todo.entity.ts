@@ -31,13 +31,13 @@ export class WeeklyTodo extends Todo {
     displayOrder: number,
     daysToRepeat: Day[],
   ): WeeklyTodo {
-    const dailyTodo = new WeeklyTodo();
-    dailyTodo.name = name;
-    dailyTodo.description = description;
-    dailyTodo.displayOrder = displayOrder;
-    dailyTodo.daysToRepeat = daysToRepeat;
-    dailyTodo.daysCompleted = [];
+    const weeklyTodo = new WeeklyTodo();
+    weeklyTodo.name = name;
+    weeklyTodo.description = description;
+    weeklyTodo.displayOrder = displayOrder;
+    weeklyTodo.daysToRepeat = daysToRepeat;
+    weeklyTodo.daysCompleted = [];
     
-    return dailyTodo;
+    return weeklyTodo;
   }
 }

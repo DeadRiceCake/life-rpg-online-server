@@ -11,7 +11,7 @@ export abstract class Todo {
   @Column({ length: 50 })
   name: string; // 할 일 이름
 
-  @Column({ length: 255 })
+  @Column({ length: 255, default: '' })
   description: string; // 할 일 설명
 
   @Column({ name: 'display_order' })

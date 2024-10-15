@@ -89,7 +89,7 @@ export class Hero {
 
   // relations ==============================================
 
-  @OneToOne(() => User, (user) => user.hero)
+  @OneToOne(() => User, (user) => user.hero, { onDelete: 'CASCADE', eager: true })
   @JoinColumn({ name: 'user_id' })
   user: User;
 
@@ -116,5 +116,9 @@ export class Hero {
    */
   experienceToNextLevel(): number {
     return this.level * 100;
+  }
+
+  addDailyTodo(dailyTodo: DailyTodo): void {
+    this.dailyTodos.push(dailyTodo);
   }
 }

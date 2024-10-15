@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { FindOptionsRelations } from 'typeorm';
 
 import { AppLogger } from '../../shared/logger/logger.service';
 import { RequestContext } from '../../shared/request-context/request-context.dto';
@@ -20,6 +21,33 @@ export class HeroService {
 
     const hero =  Hero.of(name, user);
     
+    this.logger.log(ctx, `calling ${HeroRepository.name}.save`);
+    return await this.repository.save(hero);
+  }
+
+  async getHeroByUserId(
+    ctx: RequestContext, 
+    userId: number, 
+    relations?: FindOptionsRelations<Hero>
+  ): Promise<Hero> {
+    this.logger.log(ctx, `${this.getHeroByUserId.name} was called`);
+
+    this.logger.log(ctx, `calling ${HeroRepository.name}.findOne`);
+    const hero = await this.repository.findOne({ 
+      where: { user: { id: userId } }, 
+      relations
+    });
+
+    if (!hero) {
+      throw new NotFoundException('존재하지 않는 영웅입니다.');
+    }
+
+    return hero;
+  }
+
+  async updateHero(ctx: RequestContext, hero: Hero): Promise<Hero> {
+    this.logger.log(ctx, `${this.updateHero.name} was called`);
+
     this.logger.log(ctx, `calling ${HeroRepository.name}.save`);
     return await this.repository.save(hero);
   }

@@ -7,7 +7,7 @@ import {
 import { Hero } from '../../hero/entities/hero.entity';
 import { Todo } from './base-todo.entity';
 
-@Entity('daily_todos')
+@Entity('daily_todos', { orderBy: { displayOrder: 'ASC' } })
 export class DailyTodo extends Todo {
   // relations ==============================================
 

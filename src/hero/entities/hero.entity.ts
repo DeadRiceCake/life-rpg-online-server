@@ -75,6 +75,12 @@ export class Hero {
   @Column()
   fatigue: number; // 피로도 (0 ~ 100) 0: 피로 없음, 100: 피로 최대 (피로도가 100이 되면 전투 불가)
 
+  @Column({ name: 'max_daily_todo_reward', default: 10 })
+  maxDailyTodoReward: number; // 일일 할 일 최대 보상
+
+  @Column({ name: 'max_weekly_todo_reward', default: 3 })
+  maxWeeklyTodoReward: number; // 주간 할 일 최대 보상
+
   @CreateDateColumn({ name: 'created_at', nullable: true })
   createdAt: Date;
 

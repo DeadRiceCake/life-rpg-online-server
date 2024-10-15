@@ -1,3 +1,4 @@
+import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { AppLogger } from '../../shared/logger/logger.service';
@@ -12,6 +13,7 @@ describe('HeroService', () => {
 
   const mockedRepository = {
     save: jest.fn(),
+    findOne: jest.fn(),
   };
 
   const mockedLogger = { setContext: jest.fn(), log: jest.fn() };
@@ -48,23 +50,6 @@ describe('HeroService', () => {
 
       const saveHeroInput = {
         name: heroName,
-        job: JOB.CITIZEN,
-        level: 1,
-        experience: 0,
-        maxHp: 100,
-        currentHp: 100,
-        maxMp: 100,
-        currentMp: 100,
-        strength: 10,
-        intelligence: 10,
-        dexterity: 10,
-        dodge: 0,
-        critical: 0,
-        physicalAttack: 10,
-        magicalAttack: 10,
-        physicalDefense: 0,
-        magicalDefense: 0,
-        fatigue: 0,
         user,
       };
 
@@ -99,6 +84,67 @@ describe('HeroService', () => {
       
       expect(mockedRepository.save).toHaveBeenCalledWith(saveHeroInput);
       expect(output).toEqual(expectedOutput);
+    });
+  });
+
+  describe('getHeroByUserId', () => {
+    it('올바른 파라미터와 함께 getHeroByUserId 호출', async () => {
+      const userId = 1;
+
+      const currentDate = new Date();
+
+      const user = User.of({
+        id: userId,
+        username: 'jhon',
+        name: 'Jhon doe',
+      });
+
+      const hero = {
+        id: 1,
+        name: 'Kihira',
+        job: JOB.CITIZEN,
+        level: 1,
+        experience: 0,
+        maxHp: 100,
+        currentHp: 100,
+        maxMp: 100,
+        currentMp: 100,
+        strength: 10,
+        intelligence: 10,
+        dexterity: 10,
+        dodge: 0,
+        critical: 0,
+        physicalAttack: 10,
+        magicalAttack: 10,
+        physicalDefense: 0,
+        magicalDefense: 0,
+        fatigue: 0,
+        user,
+        createdAt: currentDate,
+        updatedAt: currentDate,
+      };
+
+      mockedRepository.findOne.mockResolvedValue(hero);
+
+      const output = await service.getHeroByUserId(ctx, userId);
+
+      expect(mockedRepository.findOne).toHaveBeenCalledWith({
+        where: { user: { id: userId } },
+        relations: undefined,
+      });
+      expect(output).toEqual(hero);
+    });
+
+    it('결과값이 null일 경우 NotFoundException 반환', async () => {
+      const userId = 1;
+
+      mockedRepository.findOne.mockResolvedValue(null);
+
+      try {
+        await service.getHeroByUserId(ctx, userId);
+      } catch (error: any) {
+        expect(error.constructor).toBe(NotFoundException);
+      }
     });
   });
 });

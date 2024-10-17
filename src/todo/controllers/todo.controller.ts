@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
@@ -8,6 +8,7 @@ import { ReqContext } from '../../shared/request-context/req-context.decorator';
 import { RequestContext } from '../../shared/request-context/request-context.dto';
 import { CreateDailyTodoRequest } from '../dtos/create-daily-todo.dto';
 import { DailyTodoResponse } from '../dtos/daily-todo-response.dto';
+import { UpdateDailyTodoRequest } from '../dtos/update-daily-todo.dto';
 import { DailyTodoService } from '../services/daily-todo.service';
 
 @ApiTags('todos')
@@ -58,6 +59,30 @@ export class TodoController {
     const dailyTodos = await this.dailyTodoService.getDailyTodos(ctx);
     return { 
       data: dailyTodos.map((dailyTodo) => new DailyTodoResponse(dailyTodo)),
+      meta: {} 
+    };
+  }
+
+  @Put('/daily/:dailyTodoId')
+  @ApiOperation({
+    summary: '일일 할 일 수정',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: SwaggerBaseApiResponse(DailyTodoResponse),
+  })
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  async updateDailyTodo(
+    @ReqContext() ctx: RequestContext,
+    @Param('dailyTodoId') dailyTodoId: number,
+    @Body() updateDailyTodoRequest: UpdateDailyTodoRequest,
+  ): Promise<BaseApiResponse<DailyTodoResponse>> {
+    this.logger.log(ctx, `${this.updateDailyTodo.name} was called`);
+
+    const dailyTodo = await this.dailyTodoService.updateDailyTodo(ctx, dailyTodoId, updateDailyTodoRequest);
+    return { 
+      data: new DailyTodoResponse(dailyTodo),
       meta: {} 
     };
   }

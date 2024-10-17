@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose, Transform } from 'class-transformer';
 import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 
@@ -13,7 +13,7 @@ export class CreateDailyTodoRequest {
   name: string;
 
   @Expose()
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   @MaxLength(255)

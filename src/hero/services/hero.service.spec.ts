@@ -1,10 +1,12 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { plainToClass } from 'class-transformer';
 
 import { AppLogger } from '../../shared/logger/logger.service';
 import { RequestContext } from '../../shared/request-context/request-context.dto';
 import { User } from '../../user/entities/user.entity';
 import { JOB } from '../constants/job.constant';
+import { Hero } from '../entities/hero.entity';
 import { HeroRepository } from '../repositories/hero.repository';
 import { HeroService } from './hero.service';
 
@@ -50,6 +52,7 @@ describe('HeroService', () => {
 
       const saveHeroInput = {
         name: heroName,
+        user,
         job: JOB.CITIZEN,
         level: 1,
         experience: 0,
@@ -67,7 +70,11 @@ describe('HeroService', () => {
         physicalDefense: 0,
         magicalDefense: 0,
         fatigue: 0,
-        user,
+        maxDailyTodoReward: 10,
+        receivedDailyTodoReward: 0,
+        maxWeeklyTodoReward: 3,
+        receivedWeeklyTodoReward: 0,
+        statPoints: 0,
       };
 
       const expectedOutput = {
@@ -99,7 +106,7 @@ describe('HeroService', () => {
 
       const output = await service.createHero(ctx, user, heroName);
       
-      expect(mockedRepository.save).toHaveBeenCalledWith(saveHeroInput);
+      expect(mockedRepository.save).toHaveBeenCalledWith(plainToClass(Hero, saveHeroInput));
       expect(output).toEqual(expectedOutput);
     });
   });

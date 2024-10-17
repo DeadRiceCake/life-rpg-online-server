@@ -44,4 +44,11 @@ export class HeroService {
 
     return hero;
   }
+
+  async updateHero(ctx: RequestContext, hero: Hero): Promise<void> {
+    this.logger.log(ctx, `${this.updateHero.name} was called`);
+
+    this.logger.log(ctx, `calling ${HeroRepository.name}.save`);
+    await this.repository.update({ id: hero.id }, hero);
+  }
 }

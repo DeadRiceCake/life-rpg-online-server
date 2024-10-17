@@ -1,3 +1,4 @@
+import { ForbiddenException } from '@nestjs/common';
 import {
   Column,
   Entity,
@@ -39,5 +40,11 @@ export class WeeklyTodo extends Todo {
     weeklyTodo.daysCompleted = [];
     
     return weeklyTodo;
+  }
+
+  checkAuthority(heroId: number): void {
+    if (this.hero.id !== heroId) {
+      throw new ForbiddenException('권한도 없는 주제에 건방지구나.');
+    }
   }
 }

@@ -22,4 +22,8 @@ export abstract class Todo {
 
   @CreateDateColumn({ name: 'created_at', nullable: true, type: 'timestamptz' })
   createdAt: Date;
+
+  // methods ================================================
+
+  abstract checkAuthority(heroId: number): void;
 }

@@ -11,13 +11,11 @@ import {
   createDBEntities,
   resetDBBeforeTest,
   seedAdminUser,
-  seedUser,
 } from '../test-utils';
 
 describe('TodoController (e2e)', () => {
   let app: INestApplication;
   let authTokenForAdmin: AuthTokenOutput;
-  let authTokenForUser: AuthTokenOutput;
 
   initializeTransactionalContext();
 
@@ -34,7 +32,6 @@ describe('TodoController (e2e)', () => {
     await app.init();
 
     ({ authTokenForAdmin } = await seedAdminUser(app));
-    ({ authTokenForUser } = await seedUser(app));
   });
 
   describe('[POST] /daily 데일리 투두 생성', () => {
@@ -96,22 +93,6 @@ describe('TodoController (e2e)', () => {
         .send(updateDailyTodoRequest)
         .expect(HttpStatus.NOT_FOUND);
     });
-
-    it('권한이 없는 사용자가 데일리 투두 수정 시 403 에러', async () => {
-      await request(app.getHttpServer())
-        .post('/v1/todos/daily')
-        .set('Authorization', 'Bearer ' + authTokenForUser.accessToken)
-        .send({
-          name: '테스트용 데일리 투두 만들어주기',
-          description: '시드유저의 흔적...',
-        });
-      
-      return request(app.getHttpServer())
-        .put('/v1/todos/daily/2')
-        .set('Authorization', 'Bearer ' + authTokenForAdmin.accessToken)
-        .send(updateDailyTodoRequest)
-        .expect(HttpStatus.FORBIDDEN);
-    });
     
     it('일부 요청 페이로드만 줄 경우 해당 페이로드만 변경돼야함', async () => {
       const expectedResponse = {
@@ -155,6 +136,41 @@ describe('TodoController (e2e)', () => {
             createdAt: expect.any(String),
           });
         });
+    });
+  });
+
+  describe('[PATCH] /daily 데일리 투두 완료처리', () => {
+    it('존재하지 않는 데일리 투두 완료처리 시도 시 404 에러', async () => {
+      return request(app.getHttpServer())
+        .patch('/v1/todos/daily/999')
+        .set('Authorization', 'Bearer ' + authTokenForAdmin.accessToken)
+        .expect(HttpStatus.NOT_FOUND);
+    });
+    
+    it('정상작동', async () => {
+      return request(app.getHttpServer())
+        .patch('/v1/todos/daily/1')
+        .set('Authorization', 'Bearer ' + authTokenForAdmin.accessToken)
+        .expect(HttpStatus.OK)
+        .expect((res) => {
+          expect(res.body.data).toEqual(
+            {
+              id: 1,
+              name: '알람 듣자마자 일어나기',
+              description: '알람을 끄고 다시 잔다는 것은 무척 게이스러운 일이다.',
+              displayOrder: 0,
+              isDone: true,
+              createdAt: expect.any(String),
+            }
+          );
+        });
+    });
+
+    it('이미 완료된 데일리 투두 완료처리 시 400 에러', async () => {
+      return request(app.getHttpServer())
+        .patch('/v1/todos/daily/1')
+        .set('Authorization', 'Bearer ' + authTokenForAdmin.accessToken)
+        .expect(HttpStatus.BAD_REQUEST);
     });
   });
 

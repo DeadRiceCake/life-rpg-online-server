@@ -1,4 +1,5 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { Transactional } from 'typeorm-transactional';
 
 import { HeroService } from '../../hero/services/hero.service';
 import { AppLogger } from '../../shared/logger/logger.service';
@@ -54,26 +55,47 @@ export class DailyTodoService {
   ): Promise<DailyTodo> {
     this.logger.log(ctx, `${this.updateDailyTodo.name} was called`);
 
-    const hero = await this.heroService.getHeroByUserId(
-      ctx,
-      ctx.user!.id,
-    );
-
     const dailyTodo = await this.dailyTodoRepository.getDailyTodo(
       {
-        where: { id: dailyTodoId },
-        relations: { hero: true },
+        where: { id: dailyTodoId, hero: { user: { id: ctx.user!.id } } },
+        relations: { hero: { user: true } },
       }
     );
-
-    if (dailyTodo.hero.id !== hero.id) {
-      throw new ForbiddenException('권한도 없는 주제에 건방지구나');
-    }
 
     await this.dailyTodoRepository.update(
       { id: dailyTodo.id },
       updateDailyTodoRequest
     );
+
+    return await this.dailyTodoRepository.getDailyTodo(
+      {
+        where: { id: dailyTodo.id },
+      }
+    );
+  }
+
+  @Transactional()
+  async finishDailyTodo(
+    ctx: RequestContext,
+    dailyTodoId: number,
+  ): Promise<DailyTodo> {
+    this.logger.log(ctx, `${this.finishDailyTodo.name} was called`);
+
+    const dailyTodo = await this.dailyTodoRepository.getDailyTodo(
+      {
+        where: { id: dailyTodoId, hero: { user: { id: ctx.user!.id } } },
+        relations: { hero: { user: true } },
+      }
+    );
+
+    if (dailyTodo.isDone) {
+      throw new BadRequestException('이미 완료한 일일 것인데 왜 또 완료하려 하느냐?');
+    }
+
+    dailyTodo.done();
+
+    await this.dailyTodoRepository.update({ id: dailyTodoId }, dailyTodo);
+    await this.heroService.updateHero(ctx, dailyTodo.hero);
 
     return await this.dailyTodoRepository.getDailyTodo(
       {

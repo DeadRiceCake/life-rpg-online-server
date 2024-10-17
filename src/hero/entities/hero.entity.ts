@@ -78,8 +78,17 @@ export class Hero {
   @Column({ name: 'max_daily_todo_reward', default: 10 })
   maxDailyTodoReward: number; // 일일 할 일 최대 보상
 
+  @Column({ name: 'received_daily_todo_reward', default: 0 })
+  receivedDailyTodoReward: number; // 일일 할 일 보상 획득 횟수
+
   @Column({ name: 'max_weekly_todo_reward', default: 3 })
   maxWeeklyTodoReward: number; // 주간 할 일 최대 보상
+
+  @Column({ name: 'received_weekly_todo_reward', default: 0 })
+  receivedWeeklyTodoReward: number; // 주간 할 일 보상 획득 횟수
+
+  @Column({ name: 'stat_points', default: 0 })
+  statPoints: number; // 스텟 포인트
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: Date;
@@ -125,6 +134,11 @@ export class Hero {
     hero.physicalDefense = 0;
     hero.magicalDefense = 0;
     hero.fatigue = 0;
+    hero.maxDailyTodoReward = 10;
+    hero.receivedDailyTodoReward = 0;
+    hero.maxWeeklyTodoReward = 3;
+    hero.receivedWeeklyTodoReward = 0;
+    hero.statPoints = 0;
     return hero;
   }
 
@@ -135,7 +149,113 @@ export class Hero {
     return this.level * 100;
   }
 
-  addDailyTodo(dailyTodo: DailyTodo): void {
-    this.dailyTodos.push(dailyTodo);
+  /**
+   * 경험치 획득
+   * @param experience 획득 경험치
+   */
+  gainExperience(experience: number): void {
+    this.experience += experience;
+
+    if (this.experience >= this.experienceToNextLevel()) {
+      const remainingExperience = this.experience - this.experienceToNextLevel();
+      this.levelUp();
+      this.gainExperience(remainingExperience);
+    }
+  }
+
+  /**
+   * 레벨 업
+   */
+  levelUp(): void {
+    this.level += 1;
+    this.experience = 0;
+    this.maxHp += 10;
+    this.currentHp = this.maxHp;
+    this.maxMp += 10;
+    this.currentMp = this.maxMp;
+    this.gainStrength();
+    this.gainIntelligence();
+    this.gainDexterity();
+    this.statPoints += 3;
+    this.fatigue = 0;
+
+    if (this.level % 5 === 0) {
+      this.maxDailyTodoReward += 1;
+    }
+
+    if (this.level % 10 === 0) {
+      this.maxWeeklyTodoReward += 1;
+    }
+  }
+
+  /**
+   * 힘 증가
+   */
+  gainStrength(): void {
+    this.strength += 1;
+    this.maxHp += 5;
+    this.currentHp += 5;
+    this.physicalAttack += 1;
+  }
+
+  /**
+   * 지능 증가
+   */
+  gainIntelligence(): void {
+    this.intelligence += 1;
+    this.maxMp += 5;
+    this.currentMp += 5;
+    this.magicalAttack += 1;
+  }
+
+  /**
+   * 민첩 증가
+   */
+  gainDexterity(): void {
+    this.dexterity += 1;
+    this.dodge += 1;
+    this.critical += 1;
+  }
+
+  /**
+   * 일일 할 일 보상 횟수 최대치 증가
+   */
+  gainMaxDailyTodoReward(): void {
+    if (this.level % 5 === 0) {
+      this.maxDailyTodoReward += 1;
+    }
+  }
+
+  /**
+   * 주간 할 일 보상 횟수 최대치 증가
+   */
+  gainMaxWeeklyTodoReward(): void {
+    if (this.level % 10 === 0) {
+      this.maxWeeklyTodoReward += 1;
+    }
+  }
+
+  /**
+   * 일일 할 일 완료
+   */
+  doneDailyTodo(): void {
+    if (this.receivedDailyTodoReward >= this.maxDailyTodoReward) {
+      return;
+    }
+    
+    this.receivedDailyTodoReward += 1;
+    this.gainExperience(5);
+  }
+
+  /**
+   * 주간 할 일 완료
+   */
+  doneWeeklyTodo(): void {
+    if (this.receivedWeeklyTodoReward >= this.maxWeeklyTodoReward) {
+      return;
+    }
+
+    this.receivedWeeklyTodoReward += 1;
+    this.gainExperience(10);
   }
 }

@@ -1,15 +1,27 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { Hero } from '../../hero/entities/hero.entity';
 import { HeroService } from '../../hero/services/hero.service';
 import { AppLogger } from '../../shared/logger/logger.service';
+import { RequestContext } from '../../shared/request-context/request-context.dto';
+import { User } from '../../user/entities/user.entity';
+import { CreateDailyTodoRequest } from '../dtos/create-daily-todo.dto';
+import { DailyTodoRepository } from '../repositories/daily-todo.repository';
 import { DailyTodoService } from './daily-todo.service';
+
+jest.mock('../utils/get-last-display-order.util', () => ({
+  getLastDisplayOrder: jest.fn(() => 0),
+}));
 
 describe('DailyTodoService', () => {
   let service: DailyTodoService;
 
   const mockedHeroService = {
     getHeroByUserId: jest.fn(),
-    updateHero: jest.fn(),
+  };
+
+  const mockedRepository = {
+    save: jest.fn(),
   };
 
   const mockedLogger = { setContext: jest.fn(), log: jest.fn() };
@@ -19,6 +31,7 @@ describe('DailyTodoService', () => {
       providers: [
         DailyTodoService,
         { provide: HeroService, useValue: mockedHeroService },
+        { provide: DailyTodoRepository, useValue: mockedRepository },
         { provide: AppLogger, useValue: mockedLogger },
       ],
     }).compile();
@@ -28,5 +41,31 @@ describe('DailyTodoService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+  
+  const ctx = new RequestContext();
+
+  describe('createDailyTodo', () => {
+    it('정상 작동 여부', async () => {
+      ctx.user = {id: 1} as User;
+      const createDailyTodoRequest = new CreateDailyTodoRequest();
+      createDailyTodoRequest.name = '모닝 똥 싸기';
+      createDailyTodoRequest.description = '하루의 시작을 똥과 함께';
+
+      const hero = Hero.of('똥쟁이', new User());
+      hero.dailyTodos = [];
+      
+      mockedHeroService.getHeroByUserId.mockResolvedValue(hero);
+      mockedRepository.save.mockResolvedValue({});
+
+      await service.createDailyTodo(ctx, createDailyTodoRequest);
+
+      expect(mockedRepository.save).toHaveBeenCalledWith({
+        name: '모닝 똥 싸기',
+        description: '하루의 시작을 똥과 함께',
+        displayOrder: 0,
+        hero,
+      });
+    });
   });
 });

@@ -1,30 +1,30 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
+import { Exclude, Expose } from 'class-transformer';
 
 import { Todo } from '../entities/base-todo.entity';
 
 export class BaseTodoResponse {
-  @Expose()
+  @Exclude()
   @ApiProperty()
   private readonly _id: number;
   
-  @Expose()
+  @Exclude()
   @ApiProperty()
   private readonly _name: string;
 
-  @Expose()
+  @Exclude()
   @ApiProperty()
   private readonly _description: string;
 
-  @Expose()
+  @Exclude()
   @ApiProperty()
   private readonly _displayOrder: number;
 
-  @Expose()
+  @Exclude()
   @ApiProperty()
   private readonly _isDone: boolean;
 
-  @Expose()
+  @Exclude()
   @ApiProperty()
   private readonly _createdAt: Date;
   
@@ -39,26 +39,32 @@ export class BaseTodoResponse {
     this._createdAt = todo.createdAt;
   }
 
+  @Expose()
   get id(): number {
     return this._id;
   }
 
+  @Expose()
   get name(): string {
     return this._name;
   }
 
+  @Expose()
   get description(): string {
     return this._description;
   }
 
+  @Expose()
   get displayOrder(): number {
     return this._displayOrder;
   }
 
+  @Expose()
   get isDone(): boolean {
     return this._isDone;
   }
 
+  @Expose()
   get createdAt(): Date {
     return this._createdAt;
   }

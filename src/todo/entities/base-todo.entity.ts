@@ -20,6 +20,6 @@ export abstract class Todo {
   @Column({ default: false })
   isDone: boolean; // 완료 여부
 
-  @CreateDateColumn({ name: 'created_at', nullable: true })
+  @CreateDateColumn({ name: 'created_at', nullable: true, type: 'timestamptz' })
   createdAt: Date;
 }

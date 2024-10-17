@@ -81,10 +81,10 @@ export class Hero {
   @Column({ name: 'max_weekly_todo_reward', default: 3 })
   maxWeeklyTodoReward: number; // 주간 할 일 최대 보상
 
-  @CreateDateColumn({ name: 'created_at', nullable: true })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at', nullable: true })
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
   updatedAt: Date;
 
   // relations ==============================================
@@ -108,6 +108,23 @@ export class Hero {
     const hero = new Hero();
     hero.name = name;
     hero.user = user;
+    hero.job = JOB.CITIZEN;
+    hero.level = 1;
+    hero.experience = 0;
+    hero.maxHp = 100;
+    hero.currentHp = 100;
+    hero.maxMp = 100;
+    hero.currentMp = 100;
+    hero.strength = 10;
+    hero.intelligence = 10;
+    hero.dexterity = 10;
+    hero.dodge = 0;
+    hero.critical = 0;
+    hero.physicalAttack = 10;
+    hero.magicalAttack = 10;
+    hero.physicalDefense = 0;
+    hero.magicalDefense = 0;
+    hero.fatigue = 0;
     return hero;
   }
 

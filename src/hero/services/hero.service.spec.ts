@@ -50,6 +50,23 @@ describe('HeroService', () => {
 
       const saveHeroInput = {
         name: heroName,
+        job: JOB.CITIZEN,
+        level: 1,
+        experience: 0,
+        maxHp: 100,
+        currentHp: 100,
+        maxMp: 100,
+        currentMp: 100,
+        strength: 10,
+        intelligence: 10,
+        dexterity: 10,
+        dodge: 0,
+        critical: 0,
+        physicalAttack: 10,
+        magicalAttack: 10,
+        physicalDefense: 0,
+        magicalDefense: 0,
+        fatigue: 0,
         user,
       };
 

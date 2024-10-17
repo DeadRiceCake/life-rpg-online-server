@@ -44,11 +44,4 @@ export class HeroService {
 
     return hero;
   }
-
-  async updateHero(ctx: RequestContext, hero: Hero): Promise<Hero> {
-    this.logger.log(ctx, `${this.updateHero.name} was called`);
-
-    this.logger.log(ctx, `calling ${HeroRepository.name}.save`);
-    return await this.repository.save(hero);
-  }
 }

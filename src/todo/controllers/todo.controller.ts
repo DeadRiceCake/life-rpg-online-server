@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
@@ -38,5 +38,27 @@ export class TodoController {
 
     const dailyTodo = await this.dailyTodoService.createDailyTodo(ctx, createDailyTodoRequest);
     return { data: new DailyTodoResponse(dailyTodo), meta: {} };
+  }
+
+  @Get('/daily')
+  @ApiOperation({
+    summary: '일일 할 일 조회',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: SwaggerBaseApiResponse([DailyTodoResponse]),
+  })
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  async getDailyTodos(
+    @ReqContext() ctx: RequestContext,
+  ): Promise<BaseApiResponse<DailyTodoResponse[]>> {
+    this.logger.log(ctx, `${this.getDailyTodos.name} was called`);
+
+    const dailyTodos = await this.dailyTodoService.getDailyTodos(ctx);
+    return { 
+      data: dailyTodos.map((dailyTodo) => new DailyTodoResponse(dailyTodo)),
+      meta: {} 
+    };
   }
 }

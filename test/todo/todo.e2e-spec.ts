@@ -54,8 +54,28 @@ describe('TodoController (e2e)', () => {
         .send(createDailyTodoRequest)
         .expect(HttpStatus.CREATED)
         .expect((res) => {
-          console.log(res.body);
           expect(res.body.data).toEqual(expect.objectContaining(expectedResponse));
+        });
+    });
+  });
+
+  describe('[GET] /daily 데일리 투두 조회', () => {
+    it('정상작동', async () => {
+      return request(app.getHttpServer())
+        .get('/v1/todos/daily')
+        .set('Authorization', 'Bearer ' + authTokenForAdmin.accessToken)
+        .expect(HttpStatus.OK)
+        .expect((res) => {
+          expect(res.body.data).toEqual([
+            {
+              id: 1,
+              name: '알람 끄고 다시 자기',
+              description: '알람은 꺼줘야 제맛이지',
+              displayOrder: 0,
+              isDone: false,
+              createdAt: expect.any(String),
+            }
+          ]);
         });
     });
   });

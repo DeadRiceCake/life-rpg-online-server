@@ -33,4 +33,16 @@ export class DailyTodoService {
 
     return await this.dailyTodoRepository.save(createdDailyTodo);
   }
+
+  async getDailyTodos(ctx: RequestContext): Promise<DailyTodo[]> {
+    this.logger.log(ctx, `${this.getDailyTodos.name} was called`);
+
+    const hero = await this.heroService.getHeroByUserId(
+      ctx,
+      ctx.user!.id,
+      { dailyTodos: true }
+    );
+
+    return hero.dailyTodos;
+  }
 }

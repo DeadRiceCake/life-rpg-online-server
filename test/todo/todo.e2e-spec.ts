@@ -183,6 +183,73 @@ describe('TodoController (e2e)', () => {
     });
   });
 
+  describe('[POST] /weekly 위클리 투두 생성', () => {
+    const createWeeklyTodoRequest = {
+      name: '테스트고  뭐고 일단 잠자기',
+      description: '너무 졸려...',
+      daysToRepeat: ['mon', 'tue']
+    };
+    
+    it('정상작동', async () => {
+      const expectedResponse = {
+        id: 1,
+        ...createWeeklyTodoRequest,
+        displayOrder: 0,
+        isDone: false,
+      };
+      
+      return request(app.getHttpServer())
+        .post('/v1/todos/weekly')
+        .set('Authorization', 'Bearer ' + authTokenForAdmin.accessToken)
+        .send(createWeeklyTodoRequest)
+        .expect(HttpStatus.CREATED)
+        .expect((res) => {
+          expect(res.body.data).toEqual(expect.objectContaining(expectedResponse));
+        });
+    });
+
+    it('daysToRepeat값이 없을 경우 400에러', async () => {
+      const invalidCreateWeeklyTodoRequest = {
+        name: '테스트고  뭐고 일단 잠자기',
+        description: '너무 졸려...',
+      };
+
+      return request(app.getHttpServer())
+        .post('/v1/todos/weekly')
+        .set('Authorization', 'Bearer ' + authTokenForAdmin.accessToken)
+        .send(invalidCreateWeeklyTodoRequest)
+        .expect(HttpStatus.BAD_REQUEST);
+    });
+
+    it('daysToRepeat값이 빈 배열일 경우 400에러', async () => {
+      const invalidCreateWeeklyTodoRequest = {
+        name: '테스트고  뭐고 일단 잠자기',
+        description: '너무 졸려...',
+        daysToRepeat: []
+      };
+
+      return request(app.getHttpServer())
+        .post('/v1/todos/weekly')
+        .set('Authorization', 'Bearer ' + authTokenForAdmin.accessToken)
+        .send(invalidCreateWeeklyTodoRequest)
+        .expect(HttpStatus.BAD_REQUEST);
+    });
+
+    it('daysToRepeat값이 지정된 문자열이 아니면 400에러', async () => {
+      const invalidCreateWeeklyTodoRequest = {
+        name: '테스트고  뭐고 일단 잠자기',
+        description: '너무 졸려...',
+        daysToRepeat: ['elon', 'musk', 'fri']
+      };
+
+      return request(app.getHttpServer())
+        .post('/v1/todos/weekly')
+        .set('Authorization', 'Bearer ' + authTokenForAdmin.accessToken)
+        .send(invalidCreateWeeklyTodoRequest)
+        .expect(HttpStatus.BAD_REQUEST);
+    });
+  });
+
   afterAll(async () => {
     await app.close();
     await closeDBAfterTest();

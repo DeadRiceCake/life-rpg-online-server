@@ -7,15 +7,19 @@ import { AppLogger } from '../../shared/logger/logger.service';
 import { ReqContext } from '../../shared/request-context/req-context.decorator';
 import { RequestContext } from '../../shared/request-context/request-context.dto';
 import { CreateDailyTodoRequest } from '../dtos/create-daily-todo.dto';
+import { CreateWeeklyTodoRequest } from '../dtos/create-weekly-todo.dto';
 import { DailyTodoResponse } from '../dtos/daily-todo-response.dto';
 import { UpdateDailyTodoRequest } from '../dtos/update-daily-todo.dto';
+import { WeeklyTodoResponse } from '../dtos/weekly-todo-response.dto';
 import { DailyTodoService } from '../services/daily-todo.service';
+import { WeeklyTodoService } from '../services/weekly-todo.service';
 
 @ApiTags('todos')
 @Controller('todos')
 export class TodoController {
   constructor(
     private readonly dailyTodoService: DailyTodoService,
+    private readonly weeklyTodoService: WeeklyTodoService,
     private readonly logger: AppLogger,
   ) {
     this.logger.setContext(TodoController.name);
@@ -132,5 +136,25 @@ export class TodoController {
       data: '일일 할 일 삭제 완료',
       meta: {} 
     };
+  }
+
+  @Post('/weekly')
+  @ApiOperation({
+    summary: '주간 할 일 생성',
+  })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    type: SwaggerBaseApiResponse(WeeklyTodoResponse),
+  })
+  @HttpCode(HttpStatus.CREATED)
+  @UseGuards(JwtAuthGuard)
+  async createWeeklyTodo(
+    @ReqContext() ctx: RequestContext,
+    @Body() createWeeklyTodoRequest: CreateWeeklyTodoRequest,
+  ): Promise<BaseApiResponse<WeeklyTodoResponse>> {
+    this.logger.log(ctx, `${this.createWeeklyTodo.name} was called`);
+
+    const weeklyTodo = await this.weeklyTodoService.createWeeklyTodo(ctx, createWeeklyTodoRequest);
+    return { data: new WeeklyTodoResponse(weeklyTodo), meta: {} };
   }
 }

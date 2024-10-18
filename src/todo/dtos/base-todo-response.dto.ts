@@ -4,29 +4,12 @@ import { Exclude, Expose } from 'class-transformer';
 import { Todo } from '../entities/base-todo.entity';
 
 export class BaseTodoResponse {
-  @Exclude()
-  @ApiProperty()
-  private readonly _id: number;
-  
-  @Exclude()
-  @ApiProperty()
-  private readonly _name: string;
-
-  @Exclude()
-  @ApiProperty()
-  private readonly _description: string;
-
-  @Exclude()
-  @ApiProperty()
-  private readonly _displayOrder: number;
-
-  @Exclude()
-  @ApiProperty()
-  private readonly _isDone: boolean;
-
-  @Exclude()
-  @ApiProperty()
-  private readonly _createdAt: Date;
+  @Exclude() private readonly _id: number;
+  @Exclude() private readonly _name: string;
+  @Exclude() private readonly _description: string;
+  @Exclude() private readonly _displayOrder: number;
+  @Exclude() private readonly _isDone: boolean;
+  @Exclude() private readonly _createdAt: Date;
   
   constructor(
     todo: Todo
@@ -40,31 +23,37 @@ export class BaseTodoResponse {
   }
 
   @Expose()
+  @ApiProperty()
   get id(): number {
     return this._id;
   }
 
   @Expose()
+  @ApiProperty()
   get name(): string {
     return this._name;
   }
 
   @Expose()
+  @ApiProperty()
   get description(): string {
     return this._description;
   }
 
   @Expose()
+  @ApiProperty()
   get displayOrder(): number {
     return this._displayOrder;
   }
 
   @Expose()
+  @ApiProperty()
   get isDone(): boolean {
     return this._isDone;
   }
 
   @Expose()
+  @ApiProperty()
   get createdAt(): Date {
     return this._createdAt;
   }

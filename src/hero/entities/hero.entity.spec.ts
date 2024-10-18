@@ -21,5 +21,16 @@ describe('Hero Entity Unit Test', () => {
       expect(hero.level).toBe(2);
       expect(hero.experience).toBe(remainingExperience);
     });
+
+    it('경험치가 대량으로 들어왔을 때 레벨이 여러 번 올라가야함', () => {
+      const hero = Hero.of('김첨지', new User());
+
+      hero.gainExperience(350);
+
+      const remainingExperience = 50;
+
+      expect(hero.level).toBe(3);
+      expect(hero.experience).toBe(remainingExperience);
+    });
   });
 });

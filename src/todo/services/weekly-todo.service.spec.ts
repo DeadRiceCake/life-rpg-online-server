@@ -3,7 +3,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HeroService } from '../../hero/services/hero.service';
 import { AppLogger } from '../../shared/logger/logger.service';
 import { WeeklyTodoRepository } from '../repositories/weekly-todo.repository';
-import { DailyTodoService } from './daily-todo.service';
 import { WeeklyTodoService } from './weekly-todo.service';
 
 jest.mock('../utils/get-last-display-order.util', () => ({
@@ -26,7 +25,7 @@ describe('WeeklyTodoService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        DailyTodoService,
+        WeeklyTodoService,
         { provide: HeroService, useValue: mockedHeroService },
         { provide: WeeklyTodoRepository, useValue: mockedRepository },
         { provide: AppLogger, useValue: mockedLogger },

@@ -103,4 +103,20 @@ export class DailyTodoService {
       }
     );
   }
+
+  async deleteDailyTodo(
+    ctx: RequestContext,
+    dailyTodoId: number,
+  ): Promise<void> {
+    this.logger.log(ctx, `${this.deleteDailyTodo.name} was called`);
+
+    const dailyTodo = await this.dailyTodoRepository.getDailyTodo(
+      {
+        where: { id: dailyTodoId, hero: { user: { id: ctx.user!.id } } },
+        relations: { hero: { user: true } },
+      }
+    );
+
+    await this.dailyTodoRepository.delete({ id: dailyTodo.id });
+  }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
@@ -106,6 +106,30 @@ export class TodoController {
     const dailyTodo = await this.dailyTodoService.finishDailyTodo(ctx, dailyTodoId);
     return { 
       data: new DailyTodoResponse(dailyTodo),
+      meta: {} 
+    };
+  }
+
+  @Delete('/daily/:dailyTodoId')
+  @ApiOperation({
+    summary: '일일 할 일 삭제',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: SwaggerBaseApiResponse(String),
+  })
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  async deleteDailyTodo(
+    @ReqContext() ctx: RequestContext,
+    @Param('dailyTodoId') dailyTodoId: number,
+  ): Promise<BaseApiResponse<string>> {
+    this.logger.log(ctx, `${this.deleteDailyTodo.name} was called`);
+
+    await this.dailyTodoService.deleteDailyTodo(ctx, dailyTodoId);
+
+    return { 
+      data: '일일 할 일 삭제 완료',
       meta: {} 
     };
   }

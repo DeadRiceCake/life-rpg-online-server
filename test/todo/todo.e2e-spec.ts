@@ -174,6 +174,15 @@ describe('TodoController (e2e)', () => {
     });
   });
 
+  describe('[DELETE] /daily/:dailyTodoId 데일리 투두 삭제', () => {
+    it('정상작동', async () => {
+      return request(app.getHttpServer())
+        .delete('/v1/todos/daily/1')
+        .set('Authorization', 'Bearer ' + authTokenForAdmin.accessToken)
+        .expect(HttpStatus.OK);
+    });
+  });
+
   afterAll(async () => {
     await app.close();
     await closeDBAfterTest();

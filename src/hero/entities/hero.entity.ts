@@ -166,7 +166,7 @@ export class Hero {
   /**
    * 레벨 업
    */
-  levelUp(): void {
+  private levelUp(): void {
     this.level += 1;
     this.experience = 0;
     this.maxHp += 10;
@@ -179,19 +179,14 @@ export class Hero {
     this.statPoints += 3;
     this.fatigue = 0;
 
-    if (this.level % 5 === 0) {
-      this.maxDailyTodoReward += 1;
-    }
-
-    if (this.level % 10 === 0) {
-      this.maxWeeklyTodoReward += 1;
-    }
+    this.gainMaxDailyTodoReward();
+    this.gainMaxWeeklyTodoReward();
   }
 
   /**
    * 힘 증가
    */
-  gainStrength(): void {
+  private gainStrength(): void {
     this.strength += 1;
     this.maxHp += 5;
     this.currentHp += 5;
@@ -201,7 +196,7 @@ export class Hero {
   /**
    * 지능 증가
    */
-  gainIntelligence(): void {
+  private gainIntelligence(): void {
     this.intelligence += 1;
     this.maxMp += 5;
     this.currentMp += 5;
@@ -211,7 +206,7 @@ export class Hero {
   /**
    * 민첩 증가
    */
-  gainDexterity(): void {
+  private gainDexterity(): void {
     this.dexterity += 1;
     this.dodge += 1;
     this.critical += 1;
@@ -220,7 +215,7 @@ export class Hero {
   /**
    * 일일 할 일 보상 횟수 최대치 증가
    */
-  gainMaxDailyTodoReward(): void {
+  private gainMaxDailyTodoReward(): void {
     if (this.level % 5 === 0) {
       this.maxDailyTodoReward += 1;
     }
@@ -229,7 +224,7 @@ export class Hero {
   /**
    * 주간 할 일 보상 횟수 최대치 증가
    */
-  gainMaxWeeklyTodoReward(): void {
+  private gainMaxWeeklyTodoReward(): void {
     if (this.level % 10 === 0) {
       this.maxWeeklyTodoReward += 1;
     }

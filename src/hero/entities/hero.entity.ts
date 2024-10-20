@@ -12,6 +12,7 @@ import {
 import { DailyTodo } from '../../todo/entities/daily-todo.entity';
 import { DeadlineTodo } from '../../todo/entities/deadline-todo.entity';
 import { WeeklyTodo } from '../../todo/entities/weekly-todo.entity';
+import { REWARD_STAT, RewardStat } from '../../todo/types/reward-stat.type';
 import { User } from '../../user/entities/user.entity';
 import { JOB, Job } from '../constants/job.constant';
 
@@ -233,11 +234,12 @@ export class Hero {
   /**
    * 일일 할 일 완료
    */
-  doneDailyTodo(): void {
+  doneDailyTodo(rewardStat: RewardStat): void {
     if (this.receivedDailyTodoReward >= this.maxDailyTodoReward) {
       return;
     }
-    
+
+    this.gainStat(rewardStat);
     this.receivedDailyTodoReward += 1;
     this.gainExperience(5);
   }
@@ -245,12 +247,25 @@ export class Hero {
   /**
    * 주간 할 일 완료
    */
-  doneWeeklyTodo(): void {
+  doneWeeklyTodo(rewardStat: RewardStat): void {
     if (this.receivedWeeklyTodoReward >= this.maxWeeklyTodoReward) {
       return;
     }
 
+    this.gainStat(rewardStat, 3);
     this.receivedWeeklyTodoReward += 1;
     this.gainExperience(10);
+  }
+
+  private gainStat(rewardStat: RewardStat, amount = 1): void {
+    for (let i = 0; i < amount; i++) {
+      if (rewardStat === REWARD_STAT.STRENGTH) {
+        this.gainStrength();
+      } else if (rewardStat === REWARD_STAT.INTELLIGENCE) {
+        this.gainIntelligence();
+      } else if (rewardStat === REWARD_STAT.DEXTERITY) {
+        this.gainDexterity();
+      }
+    }
   }
 }

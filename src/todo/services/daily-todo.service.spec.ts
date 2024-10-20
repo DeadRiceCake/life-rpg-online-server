@@ -7,6 +7,7 @@ import { RequestContext } from '../../shared/request-context/request-context.dto
 import { User } from '../../user/entities/user.entity';
 import { CreateDailyTodoRequest } from '../dtos/create-daily-todo.dto';
 import { DailyTodoRepository } from '../repositories/daily-todo.repository';
+import { REWARD_STAT } from '../types/reward-stat.type';
 import { TodoUtils } from '../utils/todo.util';
 import { DailyTodoService } from './daily-todo.service';
 
@@ -48,6 +49,7 @@ describe('DailyTodoService', () => {
       const createDailyTodoRequest = new CreateDailyTodoRequest();
       createDailyTodoRequest.name = '모닝 똥 싸기';
       createDailyTodoRequest.description = '하루의 시작을 똥과 함께';
+      createDailyTodoRequest.rewardStat = REWARD_STAT.DEXTERITY;
 
       const hero = Hero.of('똥쟁이', new User());
       hero.dailyTodos = [];
@@ -59,9 +61,13 @@ describe('DailyTodoService', () => {
       await service.createDailyTodo(ctx, createDailyTodoRequest);
 
       expect(mockedRepository.save).toHaveBeenCalledWith({
+        id: undefined,
         name: '모닝 똥 싸기',
         description: '하루의 시작을 똥과 함께',
         displayOrder: 0,
+        rewardStat: REWARD_STAT.DEXTERITY,
+        isDone: false,
+        createdAt: undefined,
         hero,
       });
     });

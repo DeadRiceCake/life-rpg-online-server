@@ -35,6 +35,7 @@ export class DailyTodo extends Todo {
     dailyTodo.description = description;
     dailyTodo.displayOrder = displayOrder;
     dailyTodo.rewardStat = rewardStat;
+    dailyTodo.isDone = false;
     return dailyTodo;
   }
 
@@ -49,6 +50,6 @@ export class DailyTodo extends Todo {
       return;
     }
     this.isDone = true;
-    this.hero.doneDailyTodo();
+    this.hero.doneDailyTodo(this.rewardStat);
   }
 }

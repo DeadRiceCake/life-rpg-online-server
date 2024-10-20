@@ -44,6 +44,7 @@ export class WeeklyTodo extends Todo {
     weeklyTodo.daysToRepeat = daysToRepeat;
     weeklyTodo.daysCompleted = [];
     weeklyTodo.rewardStat = rewardStat;
+    weeklyTodo.isDone = false;
     
     return weeklyTodo;
   }
@@ -71,7 +72,7 @@ export class WeeklyTodo extends Todo {
  
     if (this.daysCompleted.length === this.daysToRepeat.length) {
       this.isDone = true;
-      this.hero.doneWeeklyTodo();
+      this.hero.doneWeeklyTodo(this.rewardStat);
     }
   }
 }

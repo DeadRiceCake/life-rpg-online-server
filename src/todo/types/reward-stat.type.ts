@@ -1,7 +1,7 @@
 export const REWARD_STAT = {
-  STRENGTH: 'str',
-  INTELLIGENCE: 'int',
-  DEXTERITY: 'dex',
+  STRENGTH: 'strength',
+  INTELLIGENCE: 'intelligence',
+  DEXTERITY: 'dexterity',
 } as const;
 
 export type RewardStat = typeof REWARD_STAT[keyof typeof REWARD_STAT];

@@ -157,4 +157,27 @@ export class TodoController {
     const weeklyTodo = await this.weeklyTodoService.createWeeklyTodo(ctx, createWeeklyTodoRequest);
     return { data: new WeeklyTodoResponse(weeklyTodo), meta: {} };
   }
+  
+  @Get('/weekly')
+  @ApiOperation({
+    summary: '주간 할 일 조회',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: SwaggerBaseApiResponse([WeeklyTodoResponse]),
+  })
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  async getWeeklyTodos(
+    @ReqContext() ctx: RequestContext,
+  ): Promise<BaseApiResponse<WeeklyTodoResponse[]>> {
+    this.logger.log(ctx, `${this.getDailyTodos.name} was called`);
+
+    const weeklyTodos = await this.weeklyTodoService.getWeeklyTodos(ctx);
+
+    return { 
+      data: weeklyTodos.map((weeklyTodo) => new WeeklyTodoResponse(weeklyTodo)),
+      meta: {} 
+    };
+  }
 }

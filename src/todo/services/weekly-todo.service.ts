@@ -35,4 +35,16 @@ export class WeeklyTodoService {
 
     return await this.weeklyTodoRepository.save(weeklyTodo);
   }
+
+  async getWeeklyTodos(ctx: RequestContext): Promise<WeeklyTodo[]> {
+    this.logger.log(ctx, `${this.getWeeklyTodos.name} was called`);
+
+    const hero = await this.heroService.getHeroByUserId(
+      ctx,
+      ctx.user!.id,
+      { weeklyTodos: true }
+    );
+
+    return hero.weeklyTodos;
+  }
 }

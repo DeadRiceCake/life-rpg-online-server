@@ -250,6 +250,29 @@ describe('TodoController (e2e)', () => {
     });
   });
 
+  describe('[GET] /weekly 위클리 투두 조회', () => {
+    it('정상작동', async () => {
+      return request(app.getHttpServer())
+        .get('/v1/todos/weekly')
+        .set('Authorization', 'Bearer ' + authTokenForAdmin.accessToken)
+        .expect(HttpStatus.OK)
+        .expect((res) => {
+          expect(res.body.data).toEqual([
+            {
+              id: 1,
+              name: '테스트고  뭐고 일단 잠자기',
+              description: '너무 졸려...',
+              displayOrder: 0,
+              isDone: false,
+              daysToRepeat: ['mon', 'tue'],
+              daysCompleted: [],
+              createdAt: expect.any(String),
+            }
+          ]);
+        });
+    });
+  });
+
   afterAll(async () => {
     await app.close();
     await closeDBAfterTest();

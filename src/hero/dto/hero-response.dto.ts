@@ -1,11 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Exclude, Expose } from 'class-transformer';
+import { Exclude, Expose, Transform } from 'class-transformer';
 
-import { Hero } from '../../hero/entities/hero.entity';
-import { User } from '../../user/entities/user.entity';
+import { DailyTodoResponse } from '../../todo/dtos/daily-todo-response.dto';
+import { WeeklyTodoResponse } from '../../todo/dtos/weekly-todo-response.dto';
+import { DailyTodo } from '../../todo/entities/daily-todo.entity';
+import { DeadlineTodo } from '../../todo/entities/deadline-todo.entity';
+import { WeeklyTodo } from '../../todo/entities/weekly-todo.entity';
 import { Job } from '../constants/job.constant';
+import { Hero } from '../entities/hero.entity';
 
-export class HeroOutput {
+export class HeroResponse {
   @Exclude() private readonly _id: number;
   @Exclude() private readonly _name: string;
   @Exclude() private readonly _job: Job;
@@ -27,7 +31,9 @@ export class HeroOutput {
   @Exclude() private readonly _fatigue: number;
   @Exclude() private readonly _createdAt: Date;
   @Exclude() private readonly _updatedAt: Date;
-  @Exclude() private readonly _user: User;
+  @Exclude() private readonly _dailyTodos: DailyTodo[];
+  @Exclude() private readonly _weeklyTodos: WeeklyTodo[];
+  @Exclude() private readonly _deadlineTodos: DeadlineTodo[];
 
   constructor(hero: Hero) {
     this._id = hero.id;
@@ -51,7 +57,9 @@ export class HeroOutput {
     this._fatigue = hero.fatigue;
     this._createdAt = hero.createdAt;
     this._updatedAt = hero.updatedAt;
-    this._user = hero.user;
+    this._dailyTodos = hero.dailyTodos;
+    this._weeklyTodos = hero.weeklyTodos;
+    this._deadlineTodos = hero.deadlineTodos;
   }
 
   @Expose()
@@ -182,7 +190,28 @@ export class HeroOutput {
 
   @Expose()
   @ApiProperty()
-  get user(): User {
-    return this._user;
+  @Transform(({ value }) => value ? value : [])
+  get dailyTodos(): DailyTodoResponse[] {
+    return this._dailyTodos.map((dailyTodo) => {
+      return new DailyTodoResponse(dailyTodo);
+    });
+  }
+
+  @Expose()
+  @ApiProperty()
+  @Transform(({ value }) => value ? value : [])
+  get weeklyTodos(): WeeklyTodoResponse[] {
+    return this._weeklyTodos.map((weeklyTodo) => {
+      return new WeeklyTodoResponse(weeklyTodo);
+    });
+  }
+
+
+  // TODO: DeadlineTodoResponse 추가
+  @Expose()
+  @ApiProperty()
+  @Transform(({ value }) => value ? value : [])
+  get deadlineTodos(): DeadlineTodo[] {
+    return this._deadlineTodos;
   }
 }

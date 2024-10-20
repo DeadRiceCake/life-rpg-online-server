@@ -273,6 +273,70 @@ describe('TodoController (e2e)', () => {
     });
   });
 
+  describe('[PUT] /weekly 위클리 투두 수정', () => {
+    const updateWeeklyTodoRequest = {
+      name: '테스트고  뭐고 일단 잠자기',
+      description: '너무 졸려...',
+      daysToRepeat: ['mon', 'tue', 'wed']
+    };
+
+    it('존재하지 않는 위클리 투두 수정 시 404 에러', async () => {
+      return request(app.getHttpServer())
+        .put('/v1/todos/weekly/999')
+        .set('Authorization', 'Bearer ' + authTokenForAdmin.accessToken)
+        .send(updateWeeklyTodoRequest)
+        .expect(HttpStatus.NOT_FOUND);
+    });
+    
+    it('일부 요청 페이로드만 줄 경우 해당 페이로드만 변경돼야함', async () => {
+      const expectedResponse = {
+        name: updateWeeklyTodoRequest.name,
+        description: '너무 졸려...',
+        displayOrder: 0,
+        isDone: false,
+        daysToRepeat: ['mon'],
+        daysCompleted: [],
+      };
+      
+      return request(app.getHttpServer())
+        .put('/v1/todos/weekly/1')
+        .set('Authorization', 'Bearer ' + authTokenForAdmin.accessToken)
+        .send({ daysToRepeat: ['mon'] })
+        .expect(HttpStatus.OK)
+        .expect((res) => {
+          expect(res.body.data).toEqual({
+            id: 1,
+            ...expectedResponse,
+            createdAt: expect.any(String),
+          });
+        });
+    });
+
+    it('전체 요청 페이로드를 줄 경우 해당 페이로드로 변경돼야함', async () => {
+      const expectedResponse = {
+        name: updateWeeklyTodoRequest.name,
+        description: updateWeeklyTodoRequest.description,
+        displayOrder: 0,
+        isDone: false,
+        daysToRepeat: ['mon', 'tue', 'wed'],
+        daysCompleted: [],
+      };
+      
+      return request(app.getHttpServer())
+        .put('/v1/todos/weekly/1')
+        .set('Authorization', 'Bearer ' + authTokenForAdmin.accessToken)
+        .send(updateWeeklyTodoRequest)
+        .expect(HttpStatus.OK)
+        .expect((res) => {
+          expect(res.body.data).toEqual({
+            id: 1,
+            ...expectedResponse,
+            createdAt: expect.any(String),
+          });
+        });
+      });
+    });
+
   afterAll(async () => {
     await app.close();
     await closeDBAfterTest();

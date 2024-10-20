@@ -10,6 +10,7 @@ import { CreateDailyTodoRequest } from '../dtos/create-daily-todo.dto';
 import { CreateWeeklyTodoRequest } from '../dtos/create-weekly-todo.dto';
 import { DailyTodoResponse } from '../dtos/daily-todo-response.dto';
 import { UpdateDailyTodoRequest } from '../dtos/update-daily-todo.dto';
+import { UpdateWeeklyTodoRequest } from '../dtos/update-weekly-todo.dto';
 import { WeeklyTodoResponse } from '../dtos/weekly-todo-response.dto';
 import { DailyTodoService } from '../services/daily-todo.service';
 import { WeeklyTodoService } from '../services/weekly-todo.service';
@@ -171,12 +172,37 @@ export class TodoController {
   async getWeeklyTodos(
     @ReqContext() ctx: RequestContext,
   ): Promise<BaseApiResponse<WeeklyTodoResponse[]>> {
-    this.logger.log(ctx, `${this.getDailyTodos.name} was called`);
+    this.logger.log(ctx, `${this.getWeeklyTodos.name} was called`);
 
     const weeklyTodos = await this.weeklyTodoService.getWeeklyTodos(ctx);
 
     return { 
       data: weeklyTodos.map((weeklyTodo) => new WeeklyTodoResponse(weeklyTodo)),
+      meta: {} 
+    };
+  }
+  
+  @Put('/weekly/:weeklyTodoId')
+  @ApiOperation({
+    summary: '주간 할 일 수정',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: SwaggerBaseApiResponse(WeeklyTodoResponse),
+  })
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  async updateWeeklyTodo(
+    @ReqContext() ctx: RequestContext,
+    @Param('weeklyTodoId') weeklyTodoId: number,
+    @Body() updateWeeklyTodoRequest: UpdateWeeklyTodoRequest,
+  ): Promise<BaseApiResponse<WeeklyTodoResponse>> {
+    this.logger.log(ctx, `${this.updateDailyTodo.name} was called`);
+
+    const weeklyTodo = await this.weeklyTodoService.updateWeeklyTodo(ctx, weeklyTodoId, updateWeeklyTodoRequest);
+
+    return { 
+      data: new WeeklyTodoResponse(weeklyTodo),
       meta: {} 
     };
   }

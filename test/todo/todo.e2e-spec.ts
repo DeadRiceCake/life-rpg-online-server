@@ -6,6 +6,7 @@ import { initializeTransactionalContext } from 'typeorm-transactional';
 import { setNestApp } from '../../set-nest-app';
 import { AppModule } from '../../src/app.module';
 import { AuthTokenOutput } from '../../src/auth/dtos/auth-token-output.dto';
+import { TodoUtils } from '../../src/todo/utils/todo.util';
 import {
   closeDBAfterTest,
   createDBEntities,
@@ -277,7 +278,7 @@ describe('TodoController (e2e)', () => {
     const updateWeeklyTodoRequest = {
       name: '테스트고  뭐고 일단 잠자기',
       description: '너무 졸려...',
-      daysToRepeat: ['mon', 'tue', 'wed']
+      daysToRepeat: ['mon', 'tue']
     };
 
     it('존재하지 않는 위클리 투두 수정 시 404 에러', async () => {
@@ -318,7 +319,7 @@ describe('TodoController (e2e)', () => {
         description: updateWeeklyTodoRequest.description,
         displayOrder: 0,
         isDone: false,
-        daysToRepeat: ['mon', 'tue', 'wed'],
+        daysToRepeat: ['mon', 'tue'],
         daysCompleted: [],
       };
       
@@ -336,6 +337,81 @@ describe('TodoController (e2e)', () => {
         });
       });
     });
+
+  describe('[PATCH] /weekly 위클리 투두 완료처리', () => {
+    it('존재하지 않는 위클리 투두 완료처리 시도 시 404 에러', async () => {
+      return request(app.getHttpServer())
+        .patch('/v1/todos/weekly/999')
+        .set('Authorization', 'Bearer ' + authTokenForAdmin.accessToken)
+        .expect(HttpStatus.NOT_FOUND);
+    });
+
+    it('지정하지 않은 요일에 완료할 경우 400에러', async () => {
+      jest.spyOn(TodoUtils, 'getToday').mockReturnValue('sun');
+      
+      return request(app.getHttpServer())
+        .patch('/v1/todos/weekly/1')
+        .set('Authorization', 'Bearer ' + authTokenForAdmin.accessToken)
+        .expect(HttpStatus.BAD_REQUEST);
+    });
+
+    it('정상작동1: 반복 요일중 하루를 완료했을 경우 daysCompleted에 완료일 추가', async () => {
+      jest.spyOn(TodoUtils, 'getToday').mockReturnValue('mon');
+      
+      return request(app.getHttpServer())
+        .patch('/v1/todos/weekly/1')
+        .set('Authorization', 'Bearer ' + authTokenForAdmin.accessToken)
+        .expect(HttpStatus.OK)
+        .expect((res) => {
+          expect(res.body.data).toEqual(
+            {
+              id: 1,
+              name: '테스트고  뭐고 일단 잠자기',
+              description: '너무 졸려...',
+              displayOrder: 0,
+              isDone: false,
+              daysToRepeat: ['mon', 'tue'],
+              daysCompleted: ['mon'],
+              createdAt: expect.any(String),
+            }
+          );
+        });
+    });
+
+    it('이미 완료한 요일을 완료할 경우 400에러', async () => {
+      jest.spyOn(TodoUtils, 'getToday').mockReturnValue('mon');
+      
+      return request(app.getHttpServer())
+        .patch('/v1/todos/weekly/1')
+        .set('Authorization', 'Bearer ' + authTokenForAdmin.accessToken)
+        .expect(HttpStatus.BAD_REQUEST);
+    });
+
+    it('모든 반복 요일을 완료했을 경우 isDone이 true로 변경되어야함', async () => {
+      jest.spyOn(TodoUtils, 'getToday').mockReturnValue('tue');
+      
+      return request(app.getHttpServer())
+        .patch('/v1/todos/weekly/1')
+        .set('Authorization', 'Bearer ' + authTokenForAdmin.accessToken)
+        .expect(HttpStatus.OK)
+        .expect((res) => {
+          expect(res.body.data).toEqual(
+            {
+              id: 1,
+              name: '테스트고  뭐고 일단 잠자기',
+              description: '너무 졸려...',
+              displayOrder: 0,
+              isDone: true,
+              daysToRepeat: ['mon', 'tue'],
+              daysCompleted: ['mon', 'tue'],
+              createdAt: expect.any(String),
+            }
+          );
+        });
+    });
+
+    jest.spyOn(TodoUtils, 'getToday').mockRestore();
+  });
 
   afterAll(async () => {
     await app.close();

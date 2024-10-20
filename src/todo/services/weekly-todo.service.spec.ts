@@ -5,7 +5,7 @@ import { AppLogger } from '../../shared/logger/logger.service';
 import { WeeklyTodoRepository } from '../repositories/weekly-todo.repository';
 import { WeeklyTodoService } from './weekly-todo.service';
 
-jest.mock('../utils/get-last-display-order.util', () => ({
+jest.mock('../utils/todo.util', () => ({
   getLastDisplayOrder: jest.fn(() => 0),
 }));
 

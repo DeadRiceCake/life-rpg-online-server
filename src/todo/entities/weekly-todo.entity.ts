@@ -1,4 +1,4 @@
-import { ForbiddenException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import {
   Column,
   Entity,
@@ -45,6 +45,27 @@ export class WeeklyTodo extends Todo {
   checkAuthority(heroId: number): void {
     if (this.hero.id !== heroId) {
       throw new ForbiddenException('권한도 없는 주제에 건방지구나.');
+    }
+  }
+
+  done(day: Day): void {
+    if (this.isDone) {
+      return;
+    }
+
+    if (!this.daysToRepeat.includes(day)) {
+      throw new BadRequestException('오늘은 이 할 일을 완료할 수 없다');
+    }
+
+    if (this.daysCompleted.includes(day)) {
+      throw new BadRequestException('이미 이 할 일을 완료했다');
+    }
+
+    this.daysCompleted.push(day);
+ 
+    if (this.daysCompleted.length === this.daysToRepeat.length) {
+      this.isDone = true;
+      this.hero.doneWeeklyTodo();
     }
   }
 }

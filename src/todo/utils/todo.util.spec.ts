@@ -1,12 +1,12 @@
 import { Todo } from "../entities/base-todo.entity";
-import { getLastDisplayOrder } from "./get-last-display-order.util";
+import { TodoUtils } from "./todo.util";
 
 describe('Todo Utils Test', () => {
   describe('getLastDisplayOrder', () => {
     it('todos가 빈 배열일 경우 0을 반환해야 함', () => {
       const todos: Todo[] = [];
 
-      const result = getLastDisplayOrder(todos);
+      const result = TodoUtils.getLastDisplayOrder(todos);
 
       expect(result).toBe(0);
     });
@@ -19,7 +19,7 @@ describe('Todo Utils Test', () => {
         { displayOrder: 0 } as Todo,
       ];
 
-      const result = getLastDisplayOrder(todos);
+      const result = TodoUtils.getLastDisplayOrder(todos);
 
       expect(result).toBe(3);
     });

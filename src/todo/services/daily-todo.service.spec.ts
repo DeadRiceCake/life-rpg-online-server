@@ -9,7 +9,7 @@ import { CreateDailyTodoRequest } from '../dtos/create-daily-todo.dto';
 import { DailyTodoRepository } from '../repositories/daily-todo.repository';
 import { DailyTodoService } from './daily-todo.service';
 
-jest.mock('../utils/get-last-display-order.util', () => ({
+jest.mock('../utils/todo.util', () => ({
   getLastDisplayOrder: jest.fn(() => 0),
 }));
 

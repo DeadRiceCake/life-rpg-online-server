@@ -8,7 +8,7 @@ import { CreateDailyTodoRequest } from '../dtos/create-daily-todo.dto';
 import { UpdateDailyTodoRequest } from '../dtos/update-daily-todo.dto';
 import { DailyTodo } from '../entities/daily-todo.entity';
 import { DailyTodoRepository } from '../repositories/daily-todo.repository';
-import { getLastDisplayOrder } from '../utils/get-last-display-order.util';
+import { TodoUtils } from '../utils/todo.util';
 
 @Injectable()
 export class DailyTodoService {
@@ -29,7 +29,7 @@ export class DailyTodoService {
       { dailyTodos: true }
     );
 
-    const createdDailyTodo = createDailyTodoRequest.toEntity(getLastDisplayOrder(hero.dailyTodos));
+    const createdDailyTodo = createDailyTodoRequest.toEntity(TodoUtils.getLastDisplayOrder(hero.dailyTodos));
 
     createdDailyTodo.hero = hero;
 

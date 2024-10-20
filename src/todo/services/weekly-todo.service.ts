@@ -7,7 +7,7 @@ import { CreateWeeklyTodoRequest } from '../dtos/create-weekly-todo.dto';
 import { UpdateWeeklyTodoRequest } from '../dtos/update-weekly-todo.dto';
 import { WeeklyTodo } from '../entities/weekly-todo.entity';
 import { WeeklyTodoRepository } from '../repositories/weekly-todo.repository';
-import { getLastDisplayOrder } from '../utils/get-last-display-order.util';
+import { TodoUtils } from '../utils/todo.util';
 @Injectable()
 export class WeeklyTodoService {
   constructor(
@@ -30,7 +30,7 @@ export class WeeklyTodoService {
       { weeklyTodos: true }
     );
 
-    const weeklyTodo = createWeeklyTodoRequest.toEntity(getLastDisplayOrder(hero.weeklyTodos));
+    const weeklyTodo = createWeeklyTodoRequest.toEntity(TodoUtils.getLastDisplayOrder(hero.weeklyTodos));
 
     weeklyTodo.hero = hero;
 
@@ -71,6 +71,35 @@ export class WeeklyTodoService {
     await this.weeklyTodoRepository.update(
       { id: weeklyTodo.id },
       updateWeeklyTodoRequest
+    );
+
+    return await this.weeklyTodoRepository.getWeeklyTodo(
+      {
+        where: { id: weeklyTodoId, hero: { user: { id: ctx.user!.id } } },
+      }
+    );
+  }
+
+  async completeWeeklyTodo(
+    ctx: RequestContext,
+    weeklyTodoId: number
+  ): Promise<WeeklyTodo> {
+    this.logger.log(ctx, `${this.completeWeeklyTodo.name} was called`);
+
+    const weeklyTodo = await this.weeklyTodoRepository.getWeeklyTodo(
+      {
+        where: { id: weeklyTodoId, hero: { user: { id: ctx.user!.id } } },
+        relations: { hero: true },
+      }
+    );
+
+    const today = TodoUtils.getToday();
+
+    weeklyTodo.done(today);
+
+    await this.weeklyTodoRepository.update(
+      { id: weeklyTodo.id },
+      weeklyTodo
     );
 
     return await this.weeklyTodoRepository.getWeeklyTodo(

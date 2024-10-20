@@ -8,10 +8,14 @@ import {
 
 import { Hero } from '../../hero/entities/hero.entity';
 import { Day } from '../types/days.constant';
+import { RewardStat } from '../types/reward-stat.type';
 import { Todo } from './base-todo.entity';
 
 @Entity('weekly_todos')
 export class WeeklyTodo extends Todo {
+  @Column({ name: 'reward_stat' })
+  rewardStat: RewardStat;
+  
   @Column({ name: 'days_to_repeat', type: 'simple-array' })
   daysToRepeat: Day[]; // 반복 요일
 

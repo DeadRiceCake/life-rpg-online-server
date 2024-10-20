@@ -1,15 +1,21 @@
 import { ForbiddenException } from '@nestjs/common';
 import {
+  Column,
   Entity,
   JoinColumn,
   ManyToOne,
 } from 'typeorm';
 
 import { Hero } from '../../hero/entities/hero.entity';
+import { RewardStat } from '../types/reward-stat.type';
 import { Todo } from './base-todo.entity';
 
 @Entity('daily_todos', { orderBy: { displayOrder: 'ASC' } })
 export class DailyTodo extends Todo {
+  
+  @Column({ name: 'reward_stat' })
+  rewardStat: RewardStat;
+  
   // relations ==============================================
 
   @ManyToOne(() => Hero, (hero) => hero.dailyTodos)
@@ -18,11 +24,17 @@ export class DailyTodo extends Todo {
 
   // methods ================================================
 
-  static of(name: string, description: string, displayOrder: number): DailyTodo {
+  static of(
+    name: string, 
+    description: string, 
+    displayOrder: number,
+    rewardStat: RewardStat,
+  ): DailyTodo {
     const dailyTodo = new DailyTodo();
     dailyTodo.name = name;
     dailyTodo.description = description;
     dailyTodo.displayOrder = displayOrder;
+    dailyTodo.rewardStat = rewardStat;
     return dailyTodo;
   }
 

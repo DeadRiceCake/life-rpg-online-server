@@ -4,6 +4,7 @@ import { ArrayNotEmpty, IsEnum, IsNotEmpty, IsOptional, IsString, MaxLength } fr
 
 import { WeeklyTodo } from '../entities/weekly-todo.entity';
 import { DAY, Day } from '../types/days.constant';
+import { REWARD_STAT, RewardStat } from '../types/reward-stat.type';
 
 export class CreateWeeklyTodoRequest {
   @Expose()
@@ -32,7 +33,13 @@ export class CreateWeeklyTodoRequest {
   })
   daysToRepeat: Day[];
 
+  @Expose()
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsEnum(REWARD_STAT)
+  rewardStat: RewardStat;
+
   toEntity(displayOrder: number): WeeklyTodo {
-    return WeeklyTodo.of(this.name, this.description, displayOrder, this.daysToRepeat); 
+    return WeeklyTodo.of(this.name, this.description, displayOrder, this.daysToRepeat, this.rewardStat); 
   }
 }

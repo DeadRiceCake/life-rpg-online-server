@@ -7,11 +7,8 @@ import { RequestContext } from '../../shared/request-context/request-context.dto
 import { User } from '../../user/entities/user.entity';
 import { CreateDailyTodoRequest } from '../dtos/create-daily-todo.dto';
 import { DailyTodoRepository } from '../repositories/daily-todo.repository';
+import { TodoUtils } from '../utils/todo.util';
 import { DailyTodoService } from './daily-todo.service';
-
-jest.mock('../utils/todo.util', () => ({
-  getLastDisplayOrder: jest.fn(() => 0),
-}));
 
 describe('DailyTodoService', () => {
   let service: DailyTodoService;
@@ -57,6 +54,7 @@ describe('DailyTodoService', () => {
       
       mockedHeroService.getHeroByUserId.mockResolvedValue(hero);
       mockedRepository.save.mockResolvedValue({});
+      jest.spyOn(TodoUtils, 'getLastDisplayOrder').mockReturnValue(0);
 
       await service.createDailyTodo(ctx, createDailyTodoRequest);
 

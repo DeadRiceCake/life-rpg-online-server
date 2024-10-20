@@ -6,6 +6,7 @@ import { initializeTransactionalContext } from 'typeorm-transactional';
 import { setNestApp } from '../../set-nest-app';
 import { AppModule } from '../../src/app.module';
 import { AuthTokenOutput } from '../../src/auth/dtos/auth-token-output.dto';
+import { REWARD_STAT } from '../../src/todo/types/reward-stat.type';
 import { TodoUtils } from '../../src/todo/utils/todo.util';
 import {
   closeDBAfterTest,
@@ -39,6 +40,7 @@ describe('TodoController (e2e)', () => {
     const createDailyTodoRequest = {
       name: '알람 끄고 다시 자기',
       description: '알람은 꺼줘야 제맛이지',
+      rewardStat: REWARD_STAT.STRENGTH,
     };
     
     it('정상작동', async () => {
@@ -47,6 +49,7 @@ describe('TodoController (e2e)', () => {
         description: createDailyTodoRequest.description,
         displayOrder: 0,
         isDone: false,
+        rewardStat: REWARD_STAT.STRENGTH,
       };
       
       return request(app.getHttpServer())
@@ -74,6 +77,7 @@ describe('TodoController (e2e)', () => {
               description: '알람은 꺼줘야 제맛이지',
               displayOrder: 0,
               isDone: false,
+              rewardStat: REWARD_STAT.STRENGTH,
               createdAt: expect.any(String),
             }
           ]);
@@ -101,6 +105,7 @@ describe('TodoController (e2e)', () => {
         description: '알람은 꺼줘야 제맛이지',
         displayOrder: 0,
         isDone: false,
+        rewardStat: REWARD_STAT.STRENGTH,
       };
       
       return request(app.getHttpServer())
@@ -123,6 +128,7 @@ describe('TodoController (e2e)', () => {
         description: updateDailyTodoRequest.description,
         displayOrder: 0,
         isDone: false,
+        rewardStat: REWARD_STAT.STRENGTH,
       };
       
       return request(app.getHttpServer())
@@ -161,6 +167,7 @@ describe('TodoController (e2e)', () => {
               description: '알람을 끄고 다시 잔다는 것은 무척 게이스러운 일이다.',
               displayOrder: 0,
               isDone: true,
+              rewardStat: REWARD_STAT.STRENGTH,
               createdAt: expect.any(String),
             }
           );
@@ -188,7 +195,8 @@ describe('TodoController (e2e)', () => {
     const createWeeklyTodoRequest = {
       name: '테스트고  뭐고 일단 잠자기',
       description: '너무 졸려...',
-      daysToRepeat: ['mon', 'tue']
+      daysToRepeat: ['mon', 'tue'],
+      rewardStat: REWARD_STAT.STRENGTH,
     };
     
     it('정상작동', async () => {
@@ -197,6 +205,7 @@ describe('TodoController (e2e)', () => {
         ...createWeeklyTodoRequest,
         displayOrder: 0,
         isDone: false,
+        rewardStat: REWARD_STAT.STRENGTH,
       };
       
       return request(app.getHttpServer())
@@ -268,6 +277,7 @@ describe('TodoController (e2e)', () => {
               daysToRepeat: ['mon', 'tue'],
               daysCompleted: [],
               createdAt: expect.any(String),
+              rewardStat: REWARD_STAT.STRENGTH,
             }
           ]);
         });
@@ -297,6 +307,7 @@ describe('TodoController (e2e)', () => {
         isDone: false,
         daysToRepeat: ['mon'],
         daysCompleted: [],
+        rewardStat: REWARD_STAT.STRENGTH,
       };
       
       return request(app.getHttpServer())
@@ -321,6 +332,7 @@ describe('TodoController (e2e)', () => {
         isDone: false,
         daysToRepeat: ['mon', 'tue'],
         daysCompleted: [],
+        rewardStat: REWARD_STAT.STRENGTH,
       };
       
       return request(app.getHttpServer())
@@ -373,6 +385,7 @@ describe('TodoController (e2e)', () => {
               daysToRepeat: ['mon', 'tue'],
               daysCompleted: ['mon'],
               createdAt: expect.any(String),
+              rewardStat: REWARD_STAT.STRENGTH,
             }
           );
         });
@@ -405,6 +418,7 @@ describe('TodoController (e2e)', () => {
               daysToRepeat: ['mon', 'tue'],
               daysCompleted: ['mon', 'tue'],
               createdAt: expect.any(String),
+              rewardStat: REWARD_STAT.STRENGTH,
             }
           );
         });

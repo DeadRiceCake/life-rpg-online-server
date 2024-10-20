@@ -8,12 +8,12 @@ import {
 
 import { Hero } from '../../hero/entities/hero.entity';
 import { Day } from '../types/days.constant';
-import { RewardStat } from '../types/reward-stat.type';
+import { REWARD_STAT, RewardStat } from '../types/reward-stat.type';
 import { Todo } from './base-todo.entity';
 
 @Entity('weekly_todos')
 export class WeeklyTodo extends Todo {
-  @Column({ name: 'reward_stat' })
+  @Column({ name: 'reward_stat', default: REWARD_STAT.STRENGTH })
   rewardStat: RewardStat;
   
   @Column({ name: 'days_to_repeat', type: 'simple-array' })
@@ -35,6 +35,7 @@ export class WeeklyTodo extends Todo {
     description: string,
     displayOrder: number,
     daysToRepeat: Day[],
+    rewardStat: RewardStat,
   ): WeeklyTodo {
     const weeklyTodo = new WeeklyTodo();
     weeklyTodo.name = name;
@@ -42,6 +43,7 @@ export class WeeklyTodo extends Todo {
     weeklyTodo.displayOrder = displayOrder;
     weeklyTodo.daysToRepeat = daysToRepeat;
     weeklyTodo.daysCompleted = [];
+    weeklyTodo.rewardStat = rewardStat;
     
     return weeklyTodo;
   }

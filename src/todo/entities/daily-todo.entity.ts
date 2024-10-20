@@ -7,13 +7,13 @@ import {
 } from 'typeorm';
 
 import { Hero } from '../../hero/entities/hero.entity';
-import { RewardStat } from '../types/reward-stat.type';
+import { REWARD_STAT, RewardStat } from '../types/reward-stat.type';
 import { Todo } from './base-todo.entity';
 
 @Entity('daily_todos', { orderBy: { displayOrder: 'ASC' } })
 export class DailyTodo extends Todo {
   
-  @Column({ name: 'reward_stat' })
+  @Column({ name: 'reward_stat', default: REWARD_STAT.STRENGTH })
   rewardStat: RewardStat;
   
   // relations ==============================================

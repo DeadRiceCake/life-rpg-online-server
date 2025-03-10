@@ -1,190 +1,44 @@
 # TODO LIST 기반 내 인생 RPG게임으로 만들기 프로젝트
+[제작일지 구경하러 가기](https://velog.io/@dead_rice_cake/life-rpg-%EC%A0%9C%EC%9E%91%EC%9D%BC%EC%A7%801-%EC%8B%9C%EC%9E%91%EC%9D%B4-%EB%B0%98%EC%9D%B4%EB%8B%A4)
 
-## 제작일지
-[블로그에 훈수두러 가기]()
+## 프로젝트 개요
+이 프로젝트는 TODO LIST를 기반으로 내 인생 RPG게임을 만들어보는 프로젝트입니다.
+### 타겟 유저층
+타겟 유저층은 나이에 상관 없이 꾸준히 TODO LIST를 기반으로 자기계발을 하고자 하는 사람들
+### 주요 특징
+하루에 간단하게 자신의 할 일들의 체크리스트를 완료하여 재화를 얻고 이를 통해 캐릭터의 장비를 구매하거나 꾸미기 아이템을 구매하여 조금씩 성취감을 느낄 수 있다.<br>
+또한, 자신이 지금까지 완료한 투두 리스트들을 다른 사람들과도 공유 가능하다.
+### 아트 스타일
+2D 픽셀아트
 
-## 프로젝트 소개
-- 이 프로젝트는 TODO LIST를 기반으로 내 인생 RPG게임을 만들어보는 프로젝트입니다.
-- 아직 한게 없어서 일단 여기까지만 적겠습니다. 아래는 기존 nestjs starter README.md 파일 내용입니다.
-- [제작일지 구경하러 가기](https://velog.io/@dead_rice_cake/life-rpg-%EC%A0%9C%EC%9E%91%EC%9D%BC%EC%A7%801-%EC%8B%9C%EC%9E%91%EC%9D%B4-%EB%B0%98%EC%9D%B4%EB%8B%A4)
+## 플레이 및 메커니즘
+### 게임의 기본적인 흐름과 목표
+1. 최초 캐릭터 생성 후, 유저는 자신의 투두리스트를 입력한다.
+> **Note:** 투두리스트는 일간, 주간, 월간으로 구분되며, 각 종류마다 보상의 종류가 다르다.
+2. 각 투두리스트를 완료하면 게임 내에서 장비/치장 아이템 등을 상점에서 구매할 수 있는 재화(골드)와 캐릭터의 레벨을 올려주는 경험치를 지급받는다.
+> **Note:** 유저가 일간/주간/월간으로 완료 가능한 투두리스트는 한정돼있으며(비정상적인 재화 수급 방지) 완료 가능한 투두리스트의 개수는 캐릭터의 레벨에 따라서 늘어난다.
+3. 일정량의 재화를 통해 장비를 구매하여 캐릭터의 스텟이 강해지면 **몬스터 사냥** 또는 **던전 입장**이 가능하다.
+> **Note:** 몬스터 사냥을 통해 더 많은 재화나 상점에서 판매하지 않는 특수한 아이템을 획득 가능하며, 던전 입장의 경우 몬스터가 연속해서 등장하며, 마지막에는 기존 몬스터보다 강한 보스몬스터가 등장한다.
+4. 캐릭터의 레벨이 일정 수준에 도달하면, 전사/도적/마법사 중 하나로 전직이 가능하다.
+> **Note:** 각 직업별로 레벨에 따른 스텟의 상승치가 다르며, 특정 직업만이 장비 가능한 장비를 착용할 수도 있다.
+5. 레벨의 상승과 스텟에 따라 유저는 새로운 스킬을 익히며 점점 더 어려운 던전에 도전할 수 있다.
 
-## NestJS Starter Kit [v2]
+### 레벨 및 스탯 디자인
+- 투두리스트를 생성 시 해당 투두리스트를 완료하면 캐릭터의 어떤 스탯이 상승할 지 미리 설정할 수 있다.
+- 설정할 수 있는 스탯의 종류는 아래와 같다.
+  - 지능(int) : 마법공격력, 마력 관여
+  - 힘(str) : 물리공력력, 체력 관여
+  - 민첩(dex) : 회피율, 크리티컬율 관여
+- 예를 들어, 투두리스트에 **운동하기**를 입력하고, 해당 투두리스트를 완료하면 힘 스탯을 올리게 하는 식으로 설정할 수 있다.
+- 일정 레벨에 도달하면 일간/주간/월간으로 완료 가능한 투두리스트의 개수가 늘어난다.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![build](https://github.com/monstar-lab-oss/nestjs-starter-rest-api/actions/workflows/build-workflow.yml/badge.svg?branch=master&event=push)](https://github.com/monstar-lab-oss/nestjs-starter-rest-api/actions/workflows/build-workflow.yml)
-[![tests](https://github.com/monstar-lab-oss/nestjs-starter-rest-api/actions/workflows/tests-workflow.yml/badge.svg?branch=master&event=push)](https://github.com/monstar-lab-oss/nestjs-starter-rest-api/actions/workflows/tests-workflow.yml)
+### 전투시스템
+- 사냥 또는 던전 입장을 통해 전투를 시작하게 되면, 캐릭터의 **피로도**가 소모된다.
+- 피로도는 매일 완충되며, 피로도를 모두 소모하게 되면 캐릭터는 더 이상 사냥 또는 던전 입장이 불가능하다.
+- 전투시스템은 닌텐도의 유명 게임 "포켓몬스터 시리즈"와 비슷하다.
+- 턴제 전투이며, 캐릭터와 적은 번갈아가면서 공격/스킬사용/아이템사용 중 한 가지 행동을 할 수 있다.
+- 적의 HP를 0으로 만들 경우 승리하며 보상으로 재화 또는 아이템을 획득한다.
+- 플레이어의 HP가 0이 될 경우 피로도가 추가로 소모되며, 던전의 경우 즉시 던전에서 퇴장하고 캐릭터의 현재 HP가 1이 된다.
 
-This starter kit has the following outline:
-
-- Monolithic Project
-- REST API
-
-This is a Github Template Repository, so it can be easily [used as a starter template](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template) for other repositories.
-
-## Sample implementations
-
-To view sample implementations based on this starter kit, please visit the [nestjs-sample-solutions](https://github.com/monstar-lab-oss/nestjs-sample-solutions) repository.
-
-## Starter kit Features
-
-One of our main principals has been to keep the starter kit as lightweight as possible. With that in mind, here are some of the features that we have added in this starter kit.
-
-| Feature                  | Info               | Progress |
-|--------------------------|--------------------|----------|
-| Authentication           | JWT                | Done     |
-| Authorization            | RBAC (Role based)  | Done     |
-| ORM Integration          | TypeORM            | Done     |
-| DB Migrations            | TypeORM            | Done     |
-| Logging                  | winston            | Done     |
-| Request Validation       | class-validator    | Done     |
-| Pagination               | SQL offset & limit | Done     |
-| Docker Ready             | Dockerfile         | Done     |
-| Devcontainer             | -                  | Done     |
-| Auto-generated OpenAPI   | -                  | Done     |
-| Auto-generated ChangeLog | -                  | WIP      |
-
-Apart from these features above, our start-kit comes loaded with a bunch of minor awesomeness like prettier integration, commit-linting husky hooks, package import sorting, SonarCloud github actions, docker-compose for database dependencies, etc. :D
-
-## Consulting
-
-Most of the features added to this starter kit have already been tried out in production applications by us here at MonstarLab. Our production applications are more feature rich, and we constantly strive to bring those features to this OSS starter kit.
-
-If you would like to use a more feature rich starter kit, with more awesome features from Day 1, then please reach out to us and we can collaborate on it together as technology partners. :)
-
-## Installation
-
-Note: when using docker, all the `npm` commands can also be performed using `./scripts/npm` (for example `./scripts/npm install`).
-This script allows you to run the same commands inside the same environment and versions than the service, without relying on what is installed on the host.
-
-```bash
-$ npm install
-```
-
-Create a `.env` file from the template `.env.template` file.
-
-Generate public and private key pair for jwt authentication:
-
-### With docker
-
-Run this command:
-```bash
-./scripts/generate-jwt-keys
-```
-
-It will output something like this. You only need to add it to your `.env` file.
-```
-To setup the JWT keys, please add the following values to your .env file:
-JWT_PUBLIC_KEY_BASE64="(long base64 content)"
-JWT_PRIVATE_KEY_BASE64="(long base64 content)"
-```
-
-### Without docker
-
-```bash
-$ ssh-keygen -t rsa -b 2048 -m PEM -f jwtRS256.key
-# Don't add passphrase
-$ openssl rsa -in jwtRS256.key -pubout -outform PEM -out jwtRS256.key.pub
-```
-
-You may save these key files in `./local` directory as it is ignored in git.
-
-Encode keys to base64:
-
-```bash
-$ base64 -i local/jwtRS256.key
-
-$ base64 -i local/jwtRS256.key.pub
-```
-
-Must enter the base64 of the key files in `.env`:
-
-```bash
-JWT_PUBLIC_KEY_BASE64=BASE64_OF_JWT_PUBLIC_KEY
-JWT_PRIVATE_KEY_BASE64=BASE64_OF_JWT_PRIVATE_KEY
-```
-
-## Running the app
-
-We can run the project with or without docker.
-
-### Local
-
-To run the server without Docker we need this pre-requisite:
-
-- Postgres server running
-
-Commands:
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-### Docker
-
-```bash
-# build image
-$ docker build -t my-app .
-
-# run container from image
-$ docker run -p 3000:3000 --volume 'pwd':/usr/src/app --network --env-file .env my-app
-
-# run using docker compose
-$ docker compose up
-```
-
-Learn more about Docker conventions [here](https://github.com/monstar-lab-group/nodejs-backend/blob/master/architecture/docker-ready.md). (WIP - Currently this is an internal org link.)
-
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Migrations
-
-```bash
-# using docker
-$ docker compose exec app npm run migration:run
-
-# generate migration (replace CreateUsers with name of the migration)
-$ npm run migration:generate --name=CreateUsers
-
-# run migration
-$ npm run migration:run
-
-# revert migration
-$ npm run migration:revert
-```
-
-## Architecture
-
-- [Project Structure](./docs/project-structure.md)
-
-## Contributors
-
-- [Yash Murty](https://github.com/yashmurty)
-- [S M Asad Rahman](https://github.com/asad-mlbd)
-- [Tanveer Hassan](https://github.com/war1oc)
-- [Saad Bin Amjad](https://github.com/Saad-Amjad)
-- [Sivan Payyadakath](https://github.com/sivanpayyadakath)
-- [Sébastien Caparros](https://github.com/Seb-C)
-
-## External Links
-
-<a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo.svg" width="150" alt="Nest Logo" /></a>
-
-[![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/dashboard?id=monstar-lab-oss_nestjs-starter-rest-api)
+## 타 유저와의 상호작용
+- 다른 유저 둘러보기 기능을 통해 타 유저가 지금까지 완료한 투두리스트들과 캐릭터의 외관 및 스탯을 확인할 수 있다.

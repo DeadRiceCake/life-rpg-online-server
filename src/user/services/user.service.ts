@@ -49,6 +49,9 @@ export class UserService {
   ): Promise<UserOutput> {
     this.logger.log(ctx, `${this.validateUsernamePassword.name} was called`);
 
+    username = username.replace(/[\u200b\u200c\u200d\ufeff]/g, "");
+    pass = pass.replace(/[\u200b\u200c\u200d\ufeff]/g, "");
+
     this.logger.log(ctx, `calling ${UserRepository.name}.findOne`);
     const user = await this.repository.findOne({ where: { username } });
     if (!user) throw new UnauthorizedException();

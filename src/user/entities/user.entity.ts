@@ -5,38 +5,39 @@ import {
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
-  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { Article } from '../../article/entities/article.entity';
 import { ROLE } from '../../auth/constants/role.constant';
 import { Hero } from '../../hero/entities/hero.entity';
+import { UserStatus } from '../types/user-status.type';
 
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 100 })
-  name: string;
+  @Column({ length: 10 })
+  joinBY: string;
 
-  @Column()
+  @Column({ default: null })
   password: string;
 
-  @Unique('username', ['username'])
   @Column({ length: 200 })
-  username: string;
+  email: string;
+
+  @Column({ length: 255 })
+  snsKey: string;
 
   @Column('simple-array')
   roles: ROLE[];
 
-  @Column()
-  isAccountDisabled: boolean;
+  @Column({ default: UserStatus.NORMAL})
+  status: UserStatus;
 
-  @Unique('email', ['email'])
-  @Column({ length: 200 })
-  email: string;
+  @Column({ default: null })
+  lastLoginAt: Date;
 
   @CreateDateColumn({ name: 'created_at', nullable: true, type: 'timestamptz' })
   createdAt: Date;

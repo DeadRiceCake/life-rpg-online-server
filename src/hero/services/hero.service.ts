@@ -51,7 +51,10 @@ export class HeroService {
     });
 
     if (!hero) {
-      throw new NotFoundException('존재하지 않는 영웅입니다.');
+      throw new NotFoundException({
+        message: 'Hero not found',
+        errorCode: ERROR_CODE.HERO.NOT_FOUND,
+      });
     }
 
     return hero;

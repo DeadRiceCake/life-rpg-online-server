@@ -6,6 +6,7 @@ import { WeeklyTodoResponse } from '../../todo/dtos/weekly-todo-response.dto';
 import { DailyTodo } from '../../todo/entities/daily-todo.entity';
 import { DeadlineTodo } from '../../todo/entities/deadline-todo.entity';
 import { WeeklyTodo } from '../../todo/entities/weekly-todo.entity';
+import { User } from '../../user/entities/user.entity';
 import { Hero } from '../entities/hero.entity';
 import { Job } from '../types/job.type';
 
@@ -31,6 +32,10 @@ export class HeroResponse {
   @Exclude() private readonly _fatigue: number;
   @Exclude() private readonly _createdAt: Date;
   @Exclude() private readonly _updatedAt: Date;
+
+  @Exclude() private readonly _userId: string;
+  
+  @Exclude() private readonly _user: User;
   @Exclude() private readonly _dailyTodos: DailyTodo[];
   @Exclude() private readonly _weeklyTodos: WeeklyTodo[];
   @Exclude() private readonly _deadlineTodos: DeadlineTodo[];
@@ -57,9 +62,13 @@ export class HeroResponse {
     this._fatigue = hero.fatigue;
     this._createdAt = hero.createdAt;
     this._updatedAt = hero.updatedAt;
-    this._dailyTodos = hero.dailyTodos;
-    this._weeklyTodos = hero.weeklyTodos;
-    this._deadlineTodos = hero.deadlineTodos;
+
+    this._userId = hero.userId;
+
+    this._user = hero?.user;
+    this._dailyTodos = hero?.dailyTodos;
+    this._weeklyTodos = hero?.weeklyTodos;
+    this._deadlineTodos = hero?.deadlineTodos;
   }
 
   @Expose()
@@ -186,6 +195,12 @@ export class HeroResponse {
   @ApiProperty()
   get updatedAt(): Date {
     return this._updatedAt;
+  }
+
+  @Expose()
+  @ApiProperty()
+  get userId(): string {
+    return this._userId;
   }
 
   @Expose()

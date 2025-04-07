@@ -36,7 +36,7 @@ export class AuthController {
   ) {
     this.logger.setContext(AuthController.name);
   }
-  @Post('/login')
+  @Post('/login/local')
   @ApiOperation({
     summary: 'User login API',
   })

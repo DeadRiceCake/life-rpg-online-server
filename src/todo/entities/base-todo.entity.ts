@@ -25,5 +25,5 @@ export abstract class Todo {
 
   // methods ================================================
 
-  abstract checkAuthority(heroId: number): void;
+  abstract checkAuthority(heroId: string): void;
 }

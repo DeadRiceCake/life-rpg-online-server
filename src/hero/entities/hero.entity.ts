@@ -14,13 +14,14 @@ import { DeadlineTodo } from '../../todo/entities/deadline-todo.entity';
 import { WeeklyTodo } from '../../todo/entities/weekly-todo.entity';
 import { REWARD_STAT, RewardStat } from '../../todo/types/reward-stat.type';
 import { User } from '../../user/entities/user.entity';
-import { JOB, Job } from '../constants/job.constant';
+import { HERO_DEFAULT_STAT } from '../constants/hero-default-stat.contant';
+import { JOB, Job } from '../types/job.type';
 
 
 @Entity('heroes')
 export class Hero {
-  @PrimaryGeneratedColumn()
-  id: number; // PK
+  @PrimaryGeneratedColumn('uuid')
+  id: string; // PK
 
   @Column({ length: 10 })
   name: string; // 영웅 이름
@@ -88,14 +89,16 @@ export class Hero {
   @Column({ name: 'received_weekly_todo_reward', default: 0 })
   receivedWeeklyTodoReward: number; // 주간 할 일 보상 획득 횟수
 
-  @Column({ name: 'stat_points', default: 0 })
-  statPoints: number; // 스텟 포인트
-
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: Date;
 
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
   updatedAt: Date;
+
+  // foreign key ======================================
+
+  @Column({ name: 'user_id', unique: true })
+  userId: string; // FK, 유저 ID
 
   // relations ==============================================
 
@@ -114,32 +117,31 @@ export class Hero {
 
   // methods ================================================
 
-  static of(name: string, user: User): Hero {
+  static of(name: string, userId: string): Hero {
     const hero = new Hero();
+    hero.userId = userId;
     hero.name = name;
-    hero.user = user;
     hero.job = JOB.CITIZEN;
-    hero.level = 1;
-    hero.experience = 0;
-    hero.maxHp = 100;
-    hero.currentHp = 100;
-    hero.maxMp = 100;
-    hero.currentMp = 100;
-    hero.strength = 10;
-    hero.intelligence = 10;
-    hero.dexterity = 10;
-    hero.dodge = 0;
-    hero.critical = 0;
-    hero.physicalAttack = 10;
-    hero.magicalAttack = 10;
-    hero.physicalDefense = 0;
-    hero.magicalDefense = 0;
-    hero.fatigue = 0;
-    hero.maxDailyTodoReward = 10;
-    hero.receivedDailyTodoReward = 0;
-    hero.maxWeeklyTodoReward = 3;
-    hero.receivedWeeklyTodoReward = 0;
-    hero.statPoints = 0;
+    hero.level = HERO_DEFAULT_STAT.LEVEL;
+    hero.experience = HERO_DEFAULT_STAT.EXPERIENCE;
+    hero.maxHp = HERO_DEFAULT_STAT.MAX_HP;
+    hero.currentHp = HERO_DEFAULT_STAT.CURRENT_HP;
+    hero.maxMp = HERO_DEFAULT_STAT.MAX_MP;
+    hero.currentMp = HERO_DEFAULT_STAT.CURRENT_MP;
+    hero.strength = HERO_DEFAULT_STAT.STRENGTH;
+    hero.intelligence = HERO_DEFAULT_STAT.INTELLIGENCE;
+    hero.dexterity = HERO_DEFAULT_STAT.DEXTERITY;
+    hero.dodge = HERO_DEFAULT_STAT.DODGE;
+    hero.critical = HERO_DEFAULT_STAT.CRITICAL;
+    hero.physicalAttack = HERO_DEFAULT_STAT.PHYSICAL_ATTACK;
+    hero.magicalAttack = HERO_DEFAULT_STAT.MAGICAL_ATTACK;
+    hero.physicalDefense = HERO_DEFAULT_STAT.PHYSICAL_DEFENSE;
+    hero.magicalDefense = HERO_DEFAULT_STAT.MAGICAL_DEFENSE;
+    hero.fatigue = HERO_DEFAULT_STAT.FATIGUE;
+    hero.maxDailyTodoReward = HERO_DEFAULT_STAT.MAX_DAILY_TODO_REWARD;
+    hero.receivedDailyTodoReward = HERO_DEFAULT_STAT.RECEIVED_DAILY_TODO_REWARD;
+    hero.maxWeeklyTodoReward = HERO_DEFAULT_STAT.MAX_WEEKLY_TODO_REWARD;
+    hero.receivedWeeklyTodoReward = HERO_DEFAULT_STAT.RECEIVED_WEEKLY_TODO_REWARD;
     return hero;
   }
 
@@ -177,7 +179,6 @@ export class Hero {
     this.gainStrength();
     this.gainIntelligence();
     this.gainDexterity();
-    this.statPoints += 3;
     this.fatigue = 0;
 
     this.gainMaxDailyTodoReward();

@@ -5,9 +5,9 @@ import { plainToClass } from 'class-transformer';
 import { AppLogger } from '../../shared/logger/logger.service';
 import { RequestContext } from '../../shared/request-context/request-context.dto';
 import { User } from '../../user/entities/user.entity';
-import { JOB } from '../constants/job.constant';
 import { Hero } from '../entities/hero.entity';
 import { HeroRepository } from '../repositories/hero.repository';
+import { JOB } from '../types/job.type';
 import { HeroService } from './hero.service';
 
 describe('HeroService', () => {

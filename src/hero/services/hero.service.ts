@@ -1,9 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { FindOptionsRelations } from 'typeorm';
 
+import { ERROR_CODE } from '../../auth/constants/error-code.contants';
 import { AppLogger } from '../../shared/logger/logger.service';
 import { RequestContext } from '../../shared/request-context/request-context.dto';
-import { User } from '../../user/entities/user.entity';
+import { CreateHeroDto } from '../dto/create-hero.dto';
 import { Hero } from '../entities/hero.entity';
 import { HeroRepository } from '../repositories/hero.repository';
 
@@ -16,13 +17,24 @@ export class HeroService {
     this.logger.setContext(HeroService.name);
   }
 
-  async createHero(ctx: RequestContext, user: User, name: string): Promise<Hero> {
+  async createHero(ctx: RequestContext, createHeroDto: CreateHeroDto): Promise<void> {
     this.logger.log(ctx, `${this.createHero.name} was called`);
 
-    const hero =  Hero.of(name, user);
+    const existingHero = await this.repository.findOne({
+      where: { userId: ctx.user!.id }, 
+    });
+
+    if (existingHero) {
+      throw new BadRequestException({
+        message: 'Already exists a hero for this user',
+        errorCode: ERROR_CODE.HERO.ALREADY_EXISTS,
+      });
+    }
+    
+    const hero =  createHeroDto.toEntity(ctx.user!.id);
     
     this.logger.log(ctx, `calling ${HeroRepository.name}.save`);
-    return await this.repository.save(hero);
+    await this.repository.insert(hero);
   }
 
   async getHeroByUserId(
@@ -34,7 +46,7 @@ export class HeroService {
 
     this.logger.log(ctx, `calling ${HeroRepository.name}.findOne`);
     const hero = await this.repository.findOne({ 
-      where: { user: { id: userId } }, 
+      where: { userId }, 
       relations
     });
 

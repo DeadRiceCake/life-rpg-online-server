@@ -49,7 +49,7 @@ export class WeeklyTodo extends Todo {
     return weeklyTodo;
   }
 
-  checkAuthority(heroId: number): void {
+  checkAuthority(heroId: string): void {
     if (this.hero.id !== heroId) {
       throw new ForbiddenException('권한도 없는 주제에 건방지구나.');
     }

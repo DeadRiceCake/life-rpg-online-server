@@ -6,11 +6,11 @@ import { WeeklyTodoResponse } from '../../todo/dtos/weekly-todo-response.dto';
 import { DailyTodo } from '../../todo/entities/daily-todo.entity';
 import { DeadlineTodo } from '../../todo/entities/deadline-todo.entity';
 import { WeeklyTodo } from '../../todo/entities/weekly-todo.entity';
-import { Job } from '../constants/job.constant';
 import { Hero } from '../entities/hero.entity';
+import { Job } from '../types/job.type';
 
 export class HeroResponse {
-  @Exclude() private readonly _id: number;
+  @Exclude() private readonly _id: string;
   @Exclude() private readonly _name: string;
   @Exclude() private readonly _job: Job;
   @Exclude() private readonly _level: number;
@@ -64,7 +64,7 @@ export class HeroResponse {
 
   @Expose()
   @ApiProperty()
-  get id(): number {
+  get id(): string {
     return this._id;
   }
   

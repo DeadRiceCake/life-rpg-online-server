@@ -116,7 +116,7 @@ export class UserController {
   })
   async getUser(
     @ReqContext() ctx: RequestContext,
-    @Param('id') id: number,
+    @Param('id') id: string,
   ): Promise<BaseApiResponse<UserOutput>> {
     this.logger.log(ctx, `${this.getUser.name} was called`);
 
@@ -141,7 +141,7 @@ export class UserController {
   @UseInterceptors(ClassSerializerInterceptor)
   async updateUser(
     @ReqContext() ctx: RequestContext,
-    @Param('id') userId: number,
+    @Param('id') userId: string,
     @Body() input: UpdateUserInput,
   ): Promise<BaseApiResponse<UserOutput>> {
     this.logger.log(ctx, `${this.updateUser.name} was called`);

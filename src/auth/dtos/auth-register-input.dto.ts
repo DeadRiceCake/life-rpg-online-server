@@ -7,20 +7,11 @@ import {
   MaxLength,
 } from 'class-validator';
 
-import { ROLE } from '../constants/role.constant';
+import { User } from '../../user/entities/user.entity';
+import { UserJoinType } from '../../user/types/user-join.type';
+import { UserStatus } from '../../user/types/user-status.type';
 
-export class RegisterInput {
-  @ApiProperty()
-  @IsNotEmpty()
-  @MaxLength(100)
-  @IsString()
-  name: string;
-
-  @ApiProperty()
-  @MaxLength(200)
-  @IsString()
-  username: string;
-
+export class LocalRegisterInput {
   @ApiProperty()
   @IsNotEmpty()
   @Length(6, 100)
@@ -33,13 +24,13 @@ export class RegisterInput {
   @MaxLength(100)
   email: string;
 
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(10)
-  heroName: string;
-
-  // These keys can only be set by ADMIN user.
-  roles: ROLE[] = [ROLE.USER];
-  isAccountDisabled: boolean;
+  toEntity(): User {
+    return User.of(
+      UserJoinType.LOCAL,
+      this.password,
+      this.email,
+      undefined,
+      UserStatus.NORMAL,
+    );
+  }
 }

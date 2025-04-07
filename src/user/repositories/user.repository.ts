@@ -9,7 +9,7 @@ export class UserRepository extends Repository<User> {
     super(User, dataSource.createEntityManager());
   }
 
-  async getById(id: number, relationOptions?: FindOptionsRelations<User>): Promise<User> {
+  async getById(id: string, relationOptions?: FindOptionsRelations<User>): Promise<User> {
     const user = await this.findOne({ 
       where: { id },
       relations: relationOptions

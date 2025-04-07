@@ -5,7 +5,7 @@ import { User } from '../../user/entities/user.entity';
 import { ROLE } from '../constants/role.constant';
 
 export class RegisterOutput {
-  @Exclude() private readonly _id: number;
+  @Exclude() private readonly _id: string;
   @Exclude() private readonly _name: string;
   @Exclude() private readonly _username: string;
   @Exclude() private readonly _roles: ROLE[];
@@ -18,18 +18,15 @@ export class RegisterOutput {
     user: User,
   ) {
     this._id = user.id;
-    this._name = user.name;
-    this._username = user.username;
     this._roles = user.roles;
     this._email = user.email;
-    this._isAccountDisabled = user.isAccountDisabled;
     this._createdAt = user.createdAt;
     this._updatedAt = user.updatedAt;
   }
   
   @Expose()
   @ApiProperty()
-  get id(): number {
+  get id(): string {
     return this._id;
   }
 

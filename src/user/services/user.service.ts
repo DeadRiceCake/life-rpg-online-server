@@ -7,7 +7,6 @@ import { Transactional } from 'typeorm-transactional';
 import { HeroService } from '../../hero/services/hero.service';
 import { AppLogger } from '../../shared/logger/logger.service';
 import { RequestContext } from '../../shared/request-context/request-context.dto';
-import { CreateUserInput } from '../dtos/user-create-input.dto';
 import { UserOutput } from '../dtos/user-output.dto';
 import { UpdateUserInput } from '../dtos/user-update-input.dto';
 import { User } from '../entities/user.entity';
@@ -26,34 +25,30 @@ export class UserService {
   @Transactional()
   async createUser(
     ctx: RequestContext,
-    input: CreateUserInput,
+    user: User,
   ): Promise<User> {
     this.logger.log(ctx, `${this.createUser.name} was called`);
 
-    const user = plainToClass(User, input);
-
-    user.password = await hash(input.password, 10);
+    user.password = await hash(user.password, 10);
 
     this.logger.log(ctx, `calling ${UserRepository.name}.saveUser`);
     const savedUser = await this.repository.save(user);
     
-    await this.heroService.createHero(ctx, savedUser, input.heroName);
-
     return savedUser;
   }
 
-  async validateUsernamePassword(
+  async validateEmailAndPassword(
     ctx: RequestContext,
-    username: string,
+    email: string,
     pass: string,
   ): Promise<UserOutput> {
-    this.logger.log(ctx, `${this.validateUsernamePassword.name} was called`);
+    this.logger.log(ctx, `${this.validateEmailAndPassword.name} was called`);
 
-    username = username.replace(/[\u200b\u200c\u200d\ufeff]/g, "");
+    email = email.replace(/[\u200b\u200c\u200d\ufeff]/g, "");
     pass = pass.replace(/[\u200b\u200c\u200d\ufeff]/g, "");
 
     this.logger.log(ctx, `calling ${UserRepository.name}.findOne`);
-    const user = await this.repository.findOne({ where: { username } });
+    const user = await this.repository.findOne({ where: { email } });
     if (!user) throw new UnauthorizedException();
 
     const match = await compare(pass, user.password);
@@ -85,7 +80,7 @@ export class UserService {
     return { users: usersOutput, count };
   }
 
-  async findById(ctx: RequestContext, id: number): Promise<UserOutput> {
+  async findById(ctx: RequestContext, id: string): Promise<UserOutput> {
     this.logger.log(ctx, `${this.findById.name} was called`);
 
     this.logger.log(ctx, `calling ${UserRepository.name}.findOne`);
@@ -96,7 +91,7 @@ export class UserService {
     });
   }
 
-  async getUserById(ctx: RequestContext, id: number, relationOptions?: FindOptionsRelations<User>): Promise<UserOutput> {
+  async getUserById(ctx: RequestContext, id: string, relationOptions?: FindOptionsRelations<User>): Promise<UserOutput> {
     this.logger.log(ctx, `${this.getUserById.name} was called`);
 
     this.logger.log(ctx, `calling ${UserRepository.name}.getById`);
@@ -107,14 +102,14 @@ export class UserService {
     });
   }
 
-  async findByUsername(
+  async findByEmail(
     ctx: RequestContext,
-    username: string,
+    email: string,
   ): Promise<UserOutput> {
-    this.logger.log(ctx, `${this.findByUsername.name} was called`);
+    this.logger.log(ctx, `${this.findByEmail.name} was called`);
 
     this.logger.log(ctx, `calling ${UserRepository.name}.findOne`);
-    const user = await this.repository.findOne({ where: { username } });
+    const user = await this.repository.findOne({ where: { email } });
 
     return plainToClass(UserOutput, user, {
       excludeExtraneousValues: true,
@@ -123,7 +118,7 @@ export class UserService {
 
   async updateUser(
     ctx: RequestContext,
-    userId: number,
+    userId: string,
     input: UpdateUserInput,
   ): Promise<UserOutput> {
     this.logger.log(ctx, `${this.updateUser.name} was called`);

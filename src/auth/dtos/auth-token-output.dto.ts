@@ -15,13 +15,13 @@ export class AuthTokenOutput {
 
 export class UserAccessTokenClaims {
   @Expose()
-  id: number;
+  id: string;
   @Expose()
-  username: string;
+  email: string;
   @Expose()
   roles: ROLE[];
 }
 
 export class UserRefreshTokenClaims {
-  id: number;
+  id: string;
 }

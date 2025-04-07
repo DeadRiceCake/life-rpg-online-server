@@ -4,7 +4,7 @@ import * as Joi from 'joi';
 import configuration from './configuration';
 
 export const configModuleOptions: ConfigModuleOptions = {
-  envFilePath: '.env',
+  envFilePath: `${process.env.NODE_ENV || 'development'}.env`,
   load: [configuration],
   validationSchema: Joi.object({
     APP_ENV: Joi.string()

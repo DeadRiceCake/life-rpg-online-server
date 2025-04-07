@@ -27,7 +27,7 @@ export class HeroService {
 
   async getHeroByUserId(
     ctx: RequestContext, 
-    userId: number, 
+    userId: string, 
     relations?: FindOptionsRelations<Hero>
   ): Promise<Hero> {
     this.logger.log(ctx, `${this.getHeroByUserId.name} was called`);

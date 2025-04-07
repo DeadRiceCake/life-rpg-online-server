@@ -2,24 +2,23 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
-import { Article } from '../../article/entities/article.entity';
 import { ROLE } from '../../auth/constants/role.constant';
 import { Hero } from '../../hero/entities/hero.entity';
+import { UserJoinType } from '../types/user-join.type';
 import { UserStatus } from '../types/user-status.type';
 
 @Entity('users')
 export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({ length: 10 })
-  joinBY: string;
+  joinBy: UserJoinType;
 
   @Column({ default: null })
   password: string;
@@ -27,8 +26,8 @@ export class User {
   @Column({ length: 200 })
   email: string;
 
-  @Column({ length: 255 })
-  snsKey: string;
+  @Column({ length: 255, nullable: true })
+  snsKey?: string;
 
   @Column('simple-array')
   roles: ROLE[];
@@ -47,17 +46,26 @@ export class User {
 
   // relations ==============================================
 
-  @OneToMany(() => Article, (article) => article.author)
-  articles: Article[];
-
   @OneToOne(() => Hero, (hero) => hero.user, { nullable: true })
   hero: Hero;
 
   // methods ================================================
 
-  static of(params: Partial<User>): User {
+  static of(
+    joinBy: UserJoinType, 
+    password: string, 
+    email: string, 
+    snsKey: string | undefined, 
+    status: UserStatus
+  ): User {
     const user = new User();
-    Object.assign(user, params);
+    user.joinBy = joinBy;
+    user.password = password;
+    user.email = email;
+    user.snsKey = snsKey;
+    user.roles = [ROLE.USER];
+    user.status = status;
+    
     return user;
   }
 }

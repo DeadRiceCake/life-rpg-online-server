@@ -8,8 +8,7 @@ import { RequestContext } from '../../shared/request-context/request-context.dto
 import { UserOutput } from '../../user/dtos/user-output.dto';
 import { User } from '../../user/entities/user.entity';
 import { UserService } from '../../user/services/user.service';
-import { ROLE } from '../constants/role.constant';
-import { RegisterInput } from '../dtos/auth-register-input.dto';
+import { LocalRegisterInput } from '../dtos/auth-register-input.dto';
 import {
   AuthTokenOutput,
   UserAccessTokenClaims,
@@ -28,15 +27,15 @@ export class AuthService {
 
   async validateUser(
     ctx: RequestContext,
-    username: string,
+    email: string,
     pass: string,
   ): Promise<UserAccessTokenClaims> {
     this.logger.log(ctx, `${this.validateUser.name} was called`);
 
     // The userService will throw Unauthorized in case of invalid username/password.
-    const user = await this.userService.validateUsernamePassword(
+    const user = await this.userService.validateEmailAndPassword(
       ctx,
-      username,
+      email,
       pass,
     );
 
@@ -56,15 +55,11 @@ export class AuthService {
 
   async register(
     ctx: RequestContext,
-    input: RegisterInput,
+    input: LocalRegisterInput,
   ): Promise<User> {
     this.logger.log(ctx, `${this.register.name} was called`);
 
-    // TODO : Setting default role as USER here. Will add option to change this later via ADMIN users.
-    input.roles = [ROLE.USER];
-    input.isAccountDisabled = false;
-
-    return await this.userService.createUser(ctx, input);
+    return await this.userService.createUser(ctx, input.toEntity());
   }
 
   async refreshToken(ctx: RequestContext): Promise<AuthTokenOutput> {
@@ -86,7 +81,7 @@ export class AuthService {
 
     const subject = { sub: user.id };
     const payload = {
-      username: user.username,
+      email: user.email,
       sub: user.id,
       roles: user.roles,
     };

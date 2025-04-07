@@ -87,9 +87,7 @@ export class AuthService {
     };
 
     const authToken = {
-      refreshToken: this.jwtService.sign(subject, {
-        expiresIn: this.configService.get('jwt.refreshTokenExpiresInSec'),
-      }),
+      refreshToken: this.jwtService.sign(subject),
       accessToken: this.jwtService.sign(
         { ...payload, ...subject },
         { expiresIn: this.configService.get('jwt.accessTokenExpiresInSec') },

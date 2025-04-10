@@ -9,16 +9,18 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { Gender } from '../../appearance/types/gender.type';
 import { DailyTodo } from '../../todo/entities/daily-todo.entity';
 import { DeadlineTodo } from '../../todo/entities/deadline-todo.entity';
 import { WeeklyTodo } from '../../todo/entities/weekly-todo.entity';
 import { REWARD_STAT, RewardStat } from '../../todo/types/reward-stat.type';
 import { User } from '../../user/entities/user.entity';
+import { HERO_DEFAULT_EQUIPMENT } from '../constants/hero-default-equipment.contant';
 import { HERO_DEFAULT_STAT } from '../constants/hero-default-stat.contant';
 import { JOB, Job } from '../types/job.type';
 
 
-@Entity('heroes')
+@Entity('hero')
 export class Hero {
   @PrimaryGeneratedColumn('uuid')
   id: string; // PK
@@ -89,6 +91,9 @@ export class Hero {
   @Column({ name: 'received_weekly_todo_reward', default: 0 })
   receivedWeeklyTodoReward: number; // 주간 할 일 보상 획득 횟수
 
+  @Column()
+  gender: Gender; // 성별 (남성, 여성)
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: Date;
 
@@ -99,6 +104,39 @@ export class Hero {
 
   @Column({ name: 'user_id', unique: true })
   userId: string; // FK, 유저 ID
+
+  @Column({ name: 'appearance_skin_id' })
+  appearanceSkinId: string; // 외형 피부 ID
+
+  @Column({ name: 'appearance_eye_id' })
+  appearanceEyeId: string; // 외형 눈 ID
+
+  @Column({ name: 'appearance_hair_id' })
+  appearanceHairId: string; // 외형 머리 ID
+
+  @Column({ name: 'appearance_beard_id' })
+  appearanceBeardId: string; // 외형 수염 ID
+
+  @Column({ name: 'equipment_helmet_id', nullable: true })
+  equipmentHelmetId: string; // 장비 헬멧 ID
+
+  @Column({ name: 'equipment_chest_id', nullable: true })
+  equipmentChestId: string; // 장비 상의 ID
+
+  @Column({ name: 'equipment_legs_id', nullable: true })
+  equipmentLegsId: string; // 장비 하의 ID
+
+  @Column({ name: 'equipment_shoulder_id', nullable: true })
+  equipmentShoulderId: string; // 장비 어깨 ID
+
+  @Column({ name: 'equipment_cloak_id', nullable: true })
+  equipmentCloakId: string; // 장비 망토 ID
+
+  @Column({ name: 'equipment_right_weapon_id', nullable: true })
+  equipmentRightWeaponId: string; // 오른손 무기 ID
+
+  @Column({ name: 'equipment_left_weapon_id', nullable: true })
+  equipmentLeftWeaponId: string; // 왼손 무기 ID
 
   // relations ==============================================
 
@@ -117,7 +155,17 @@ export class Hero {
 
   // methods ================================================
 
-  static of(name: string, userId: string): Hero {
+  static of(
+    name: string, 
+    userId: string, 
+    appearance: {
+      gender: Gender;
+      skinId: string;
+      eyeId: string;
+      hairId: string;
+      beardId: string;
+    },
+  ): Hero {
     const hero = new Hero();
     hero.userId = userId;
     hero.name = name;
@@ -142,6 +190,16 @@ export class Hero {
     hero.receivedDailyTodoReward = HERO_DEFAULT_STAT.RECEIVED_DAILY_TODO_REWARD;
     hero.maxWeeklyTodoReward = HERO_DEFAULT_STAT.MAX_WEEKLY_TODO_REWARD;
     hero.receivedWeeklyTodoReward = HERO_DEFAULT_STAT.RECEIVED_WEEKLY_TODO_REWARD;
+    hero.gender = appearance.gender
+    hero.appearanceSkinId = appearance.skinId;
+    hero.appearanceEyeId = appearance.eyeId;
+    hero.appearanceHairId = appearance.hairId;
+    hero.appearanceBeardId = appearance.beardId;
+    hero.equipmentHelmetId = HERO_DEFAULT_EQUIPMENT.ARMOR.HELMET;
+    hero.equipmentChestId = HERO_DEFAULT_EQUIPMENT.ARMOR.CHEST;
+    hero.equipmentLegsId = HERO_DEFAULT_EQUIPMENT.ARMOR.LEGS;
+    hero.equipmentShoulderId = HERO_DEFAULT_EQUIPMENT.ARMOR.SHOULDER;
+    hero.equipmentRightWeaponId = HERO_DEFAULT_EQUIPMENT.WEAPON.RIGHT_HAND;
     return hero;
   }
 

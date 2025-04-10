@@ -31,7 +31,7 @@ export class HeroService {
       });
     }
     
-    const hero =  createHeroDto.toEntity(ctx.user!.id);
+    const hero =  createHeroDto.toHeroEntity(ctx.user!.id);
     
     this.logger.log(ctx, `calling ${HeroRepository.name}.save`);
     await this.repository.insert(hero);

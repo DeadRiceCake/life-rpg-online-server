@@ -9,6 +9,7 @@ import { UserModule } from '../user/user.module';
 import { STRATEGY_JWT_AUTH } from './constants/strategy.constant';
 import { AuthController } from './controllers/auth.controller';
 import { AuthService } from './services/auth.service';
+import { GoogleStrategy } from './strategies/google.strategy';
 import { JwtAuthStrategy } from './strategies/jwt-auth.strategy';
 import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
@@ -32,6 +33,12 @@ import { LocalStrategy } from './strategies/local.strategy';
     HeroModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtAuthStrategy, JwtRefreshStrategy],
+  providers: [
+    AuthService, 
+    LocalStrategy, 
+    JwtAuthStrategy, 
+    JwtRefreshStrategy, 
+    GoogleStrategy
+  ],
 })
 export class AuthModule {}

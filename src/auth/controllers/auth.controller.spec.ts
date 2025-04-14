@@ -6,7 +6,6 @@ import { User } from '../../user/entities/user.entity';
 import { ROLE } from '../constants/role.constant';
 import { LoginInput } from '../dtos/auth-login-input.dto';
 import { RefreshTokenInput } from '../dtos/auth-refresh-token-input.dto';
-import { RegisterInput } from '../dtos/auth-register-input.dto';
 import { RegisterOutput } from '../dtos/auth-register-output.dto';
 import { AuthTokenOutput } from '../dtos/auth-token-output.dto';
 import { AuthService } from '../services/auth.service';

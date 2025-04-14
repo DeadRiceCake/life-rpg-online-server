@@ -24,7 +24,7 @@ export class UserService {
 
   @Transactional()
   async createUser(
-    ctx: RequestContext,
+    ctx: RequestContext | null,
     user: User,
   ): Promise<User> {
     this.logger.log(ctx, `${this.createUser.name} was called`);
@@ -143,5 +143,23 @@ export class UserService {
     return plainToClass(UserOutput, updatedUser, {
       excludeExtraneousValues: true,
     });
+  }
+
+  async getUserByEmailOrSave(
+    email: string,
+    providerId: string,
+  ) {
+    this.logger.log(null, `${this.getUserByEmailOrSave.name} was called`);
+
+    const user = await this.repository.findOne({ where: { email, snsKey: providerId } });
+
+    if (user) {
+      return user;
+    }
+
+    const newUser = User.of('GOOGLE', '', email, providerId, 'NORMAL');
+    const savedUser = await this.createUser(null, newUser);
+
+    return savedUser;
   }
 }

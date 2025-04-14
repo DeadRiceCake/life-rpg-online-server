@@ -2,6 +2,7 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -23,6 +24,7 @@ import { RefreshTokenInput } from '../dtos/auth-refresh-token-input.dto';
 import { LocalRegisterInput } from '../dtos/auth-register-input.dto';
 import { RegisterOutput } from '../dtos/auth-register-output.dto';
 import { AuthTokenOutput } from '../dtos/auth-token-output.dto';
+import { GoogleAuthGuard } from '../guards/google-auth.guard';
 import { JwtRefreshGuard } from '../guards/jwt-refresh.guard';
 import { LocalAuthGuard } from '../guards/local-auth.guard';
 import { AuthService } from '../services/auth.service';
@@ -76,6 +78,21 @@ export class AuthController {
   ): Promise<BaseApiResponse<RegisterOutput>> {
     const registeredUser = await this.authService.register(ctx, input);
     return { data: new RegisterOutput(registeredUser), meta: {} };
+  }
+
+  @Get('/login/google')
+  @UseGuards(GoogleAuthGuard)
+  async googleAuth(@ReqContext() ctx: RequestContext,) {
+    console.log(ctx, 'GET google/login')
+  }
+
+  @Get('/login/google/callback')
+  @UseGuards(GoogleAuthGuard)
+  async googleAuthRedirect(@ReqContext() ctx: RequestContext) {
+    this.logger.log(ctx, `${this.googleAuthRedirect.name} was called`);
+    
+    const authToken = this.authService.login(ctx);
+    return { data: authToken, meta: {} };
   }
 
   @Post('refresh-token')

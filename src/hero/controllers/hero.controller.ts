@@ -56,11 +56,7 @@ export class HeroController {
   ): Promise<BaseApiResponse<HeroResponse>> {
     this.logger.log(ctx, `${this.getMyHero.name} was called`);
 
-    const hero = await this.heroService.getHeroByUserId(ctx, ctx.user!.id, {
-      dailyTodos: true,
-      weeklyTodos: true,
-      deadlineTodos: true,
-    });
+    const hero = await this.heroService.getHeroByUserId(ctx, ctx.user!.id);
 
     return { 
       data: new HeroResponse(hero),
